@@ -230,19 +230,24 @@ def get_model(model: str) -> ChatOpenAI:
     return llm
 
 
-def save_uploaded_file(doc) -> str:
+def save_uploaded_file(doc, folder="uploads") -> str:
     """
-    Save the uploaded file.
+    Save the uploaded file to a specific folder.
 
     Args:
         doc: The uploaded document.
+        folder (str): The folder where the file will be saved. Defaults to 'uploads'.
 
     Returns:
         str: The file name of the saved document.
     """
-    file_name = doc.name
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+
+    file_name = os.path.join(folder, doc.name)
     with open(file_name, "wb") as file:
         file.write(doc.getvalue())
+
     logger.info(f"Uploaded {file_name}")
     return file_name
 
