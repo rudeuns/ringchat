@@ -1,10 +1,13 @@
 FROM python:3.10-alpine
 
+RUN apk add --no-cache build-base libffi-dev
+
+RUN pip install --upgrade pip
 RUN pip install -U poetry
 
 WORKDIR /workdir
 
-COPY poetry.lock pyproject.toml /workdir/
+COPY pyproject.toml /workdir/
 
 RUN poetry config virtualenvs.create false \
     && poetry install --no-root --no-interaction 
