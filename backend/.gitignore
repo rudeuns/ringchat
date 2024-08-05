@@ -1,0 +1,20 @@
+# poetry
+poetry.lock
+
+# local env files
+.env
+
+# chroma
+chroma_db
+
+# python library
+requirements.txt
+
+# uploaded files
+uploads
+
+# venv
+.venv/
+
+# pycache
+backend/__pycache__/
