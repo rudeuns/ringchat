@@ -15,3 +15,6 @@ uploads
 
 # venv
 .venv/
+
+# pycache
+backend/__pycache__/
