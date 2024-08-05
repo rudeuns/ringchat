@@ -2,36 +2,110 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply w-screen h-screen bg-white text-black;
-}
+@layer base {
+  main {
+    @apply h-screen w-screen bg-white text-black;
+  }
 
-@layer components {
   .full-container {
-    @apply h-full flex flex-row;
+    @apply flex flex-row h-full;
   }
 
   .sidebar-container {
-    @apply h-full w-1/5 flex flex-col py-5 space-y-5 bg-primary-light;
+    @apply flex flex-col h-full w-1/5 bg-primary-light;
   }
 
-  .sb-logo-container-m {
-    @apply flex flex-row mx-5 justify-between items-center;
+  .main-container {
+    @apply flex flex-col mx-10 h-full w-full;
   }
 
-  .sb-logo-container-g {
-    @apply flex flex-col mx-5 space-y-5;
+  .logo-small {
+    @apply text-2xl font-bold text-primary-dark;
   }
 
-  .chatlist-container {
-    @apply flex-1 overflow-x-clip overflow-y-scroll;
+  .logo-large {
+    @apply text-5xl font-extrabold text-primary;
   }
 
-  .chatlist-folder {
-    @apply flex flex-row px-5 py-2 bg-primary text-white;
+  .btn-container {
+    @apply flex place-content-center;
   }
 
-  .chatlist-item {
-    @apply flex ps-8 pe-5 py-2;
+  .btn {
+    @apply flex px-4 py-2 bg-primary rounded-xl;
+  }
+
+  .btn-text {
+    @apply text-lg text-white;
+  }
+
+  .input-field {
+    @apply p-2 flex-grow text-lg border-2 border-primary rounded-xl appearance-none focus:outline-none focus:shadow-md;
+  }
+}
+
+@layer components {
+  .topbar {
+    @apply flex flex-row justify-end space-x-2 p-2;
+  }
+
+  .chat-main-scroll {
+    @apply flex-1 overflow-scroll;
+  }
+
+  .chat-main-container {
+    @apply flex flex-col;
+  }
+
+  .logo-desc {
+    @apply flex flex-col space-y-10 my-20;
+  }
+
+  .login-nav {
+    @apply flex flex-row place-content-center space-x-20 my-10
+  }
+
+  .chat-main-sub-container {
+    @apply flex flex-col mx-40
+  }
+
+  .link-input-container {
+    @apply flex flex-col space-y-2 my-10 p-8 pt-4 border-2 border-primary-light rounded-xl;
+  }
+
+  .link-search-nav {
+    @apply flex flex-row justify-between;
+  }
+
+  .link-input-notice {
+    @apply flex justify-end;
+  }
+
+  .chat-msg-container {
+    @apply flex flex-col space-y-4 mt-2 p-4 flex-1 overflow-scroll;
+  }
+
+  .chat-input-container {
+    @apply flex flex-row space-x-4 m-10 mt-5;
+  }
+
+  .chat-question-container {
+    @apply flex flex-row justify-end ms-80;
+  }
+
+  .chat-question {
+    @apply px-4 py-2 h-auto w-auto max-w-full bg-primary-light rounded-full;
+  }
+
+  .chat-answer-container {
+    @apply flex flex-row justify-start me-10
+  }
+
+  .chat-answer {
+    @apply px-4 py-2 h-auto w-full
+  }
+
+  .chat-answer-logo {
+    @apply flex flex-col
   }
 }
