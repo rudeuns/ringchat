@@ -1,13 +1,17 @@
 import type { Metadata } from 'next';
 import { Noto_Sans_KR } from 'next/font/google';
 import { AuthProvider } from '@/context/AuthContext';
-import Sidebar from '@/components/SideBar';
 import '@/styles/globals.css';
+import '@/styles/sidebar.css';
+import '@/styles/modal.css';
 
-const noto = Noto_Sans_KR({ subsets: ['latin'] });
+const notoSansKR = Noto_Sans_KR({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'RingChat',
+  icons: {
+    icon: '/favicon.svg'
+  }
 };
 
 export default function RootLayout({
@@ -17,12 +21,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <body className={noto.className}>
+      <body className={notoSansKR.className}>
         <AuthProvider>
-          <div className="full-container">
-            <Sidebar />
-            <main>{children}</main>
-          </div>
+          <main>{children}</main>
         </AuthProvider>
       </body>
     </html>

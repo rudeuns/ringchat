@@ -1,15 +1,21 @@
-'use client';
+import { SmallLogo } from '@/components/common/Logos';
+import NewChatButton from '@/components/buttons/NewChatButton';
+import ChatRoomFolder from '@/components/ChatRoomFolder';
+import NewFolderButton from '@/components/buttons/NewFolderButton';
 
-import { useAuth } from '@/context/AuthContext';
-import MemberSideBar from '@/components/MemberSideBar';
-import GuestSideBar from '@/components/GuestSideBar';
-
-export default function Sidebar() {
-  const { user } = useAuth();
-
+export default function SideBar() {
   return (
-    <div className="sidebar-container">
-      {user ? <MemberSideBar /> : <GuestSideBar />}
-    </div>
+    <>
+      <div className="sidebar-top">
+        <SmallLogo />
+        <NewChatButton />
+      </div>
+      <div className="sidebar-mid">
+        <ChatRoomFolder name="DEFAULT" />
+      </div>
+      <div className='sidebar-bottom'>
+        <NewFolderButton />
+      </div>
+    </>
   );
 }
