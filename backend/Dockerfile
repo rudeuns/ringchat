@@ -1,15 +1,18 @@
 FROM python:3.10-alpine
 
+RUN apk add --no-cache build-base libffi-dev
+
+RUN pip install --upgrade pip
 RUN pip install -U poetry
 
-WORKDIR /workdir
+WORKDIR /workdir/backend
 
-COPY poetry.lock pyproject.toml /workdir/
+COPY pyproject.toml ./
 
 RUN poetry config virtualenvs.create false \
     && poetry install --no-root --no-interaction 
 
-COPY . /workdir
+COPY . .
 
 ENV PYTHONPATH=/usr/local/bin/python3.10
 
@@ -19,6 +22,4 @@ RUN sed -i '1s|^.*$|#!/usr/local/bin/python3.10|' /usr/local/bin/poetry
 
 RUN ls -l /usr/local/bin/poetry
 
-WORKDIR /workdir/backend
-
-CMD ["poetry", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
