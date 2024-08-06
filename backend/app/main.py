@@ -1,4 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query, Depends
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import SQLAlchemyError
+from app.models import Folder
+
+from app.database import get_db
 
 app = FastAPI()
 
@@ -37,7 +42,25 @@ app = FastAPI()
 #         return {"answer": response}
 #     else:
 #         return {"error": "Please enter your question"}
+@app.get("/folders")
+def get_folders(user_id: int = Query(..., description='user id'), db: Session = Depends(get_db)):
+    try: 
+        with db as sess: 
+            folders = sess.query(Folder).filter(Folder.u_id == user_id).all()
+            if not folders: 
+                return {'message': "찾을 수 없는 폴더 입니다."}
+            
+            return {"folders": [folder.response_all() for folder in folders]}
 
-# if __name__ == "__main__":
-#     import uvicorn
-#     uvicorn.run(app, host="0.0.0.0", port=8000)
+    except SQLAlchemyError as e:
+        # SQLAlchemy 관련 예외 발생 시 처리
+        print(f"Database error: {e}")
+        return {"error": "데이터베이스 오류가 발생했습니다."}, 500
+    except Exception as e:
+        # 기타 예외 발생 시 처리
+        print(f"Unexpected error: {e}")
+        return {"error": "예기치 않은 오류가 발생했습니다."}, 500
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
