@@ -4,8 +4,9 @@ poetry.lock
 # local env files
 .env
 
-# chroma
+# DB
 chroma_db
+Wallet_MLDB
 
 # python library
 requirements.txt
