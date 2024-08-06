@@ -1,6 +1,6 @@
 FROM node:20.16.0-alpine
 
-WORKDIR /workdir/fronted
+WORKDIR /workdir/frontend
 
 COPY package.json package-lock.json ./
 

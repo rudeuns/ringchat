@@ -17,4 +17,4 @@ uploads
 .venv/
 
 # pycache
-backend/__pycache__/
+__pycache__/
