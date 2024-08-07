@@ -1,13 +1,11 @@
-'use client'
+interface StartButtonProps {
+  onClick: () => void;
+}
 
-import { useRouter } from "next/navigation"
-
-export default function StartButton() {
-  const router = useRouter();
-
+export default function StartButton({ onClick }: StartButtonProps) {
   return (
     <div className="btn-container mb-10">
-      <button className="btn" onClick={() => router.push('/chat/0')}>
+      <button className="btn" onClick={onClick}>
         <p className="btn-text">대화 시작하기</p>
       </button>
     </div>

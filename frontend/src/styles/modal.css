@@ -16,7 +16,7 @@
   }
 
   .modal-link-container {
-    @apply flex flex-col space-y-4 mx-10 my-4 flex-1
+    @apply flex flex-col space-y-4 mx-10 my-4 flex-1 overflow-scroll
   }
 
   .select-container {
@@ -29,5 +29,21 @@
 
   .link-list-container {
     @apply flex flex-col flex-1 overflow-scroll;
+  }
+
+  .link-item {
+    @apply flex flex-row justify-between items-center p-8 pe-0 rounded-lg shadow-inner
+  }
+
+  .link-checkbox {
+    @apply h-6 w-6 
+  }
+
+  .link-score-container {
+    @apply flex flex-row space-x-4
+  }
+
+  .link-score-sub-container {
+    @apply w-20 flex flex-row
   }
 }

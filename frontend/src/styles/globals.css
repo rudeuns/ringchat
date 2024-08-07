@@ -20,7 +20,7 @@
   }
 
   .logo-small {
-    @apply text-2xl font-bold text-primary-dark;
+    @apply text-xl font-semibold text-primary-dark;
   }
 
   .logo-large {
@@ -82,7 +82,11 @@
   }
 
   .chat-msg-container {
-    @apply flex flex-col space-y-4 mt-2 p-4 flex-1 overflow-scroll;
+    @apply flex flex-col space-y-6 mt-2 p-4 flex-1 overflow-scroll;
+  }
+
+  .chat-msg-sub-container {
+    @apply flex flex-col space-y-4
   }
 
   .chat-input-container {
@@ -94,18 +98,22 @@
   }
 
   .chat-question {
-    @apply px-4 py-2 h-auto w-auto max-w-full bg-primary-light rounded-full;
+    @apply px-4 py-2 h-auto w-auto bg-primary-light rounded-full;
   }
 
   .chat-answer-container {
-    @apply flex flex-row justify-start me-10
+    @apply flex flex-row justify-start me-20
   }
 
   .chat-answer {
-    @apply px-4 py-2 h-auto w-full
+    @apply px-4 py-2 h-auto w-auto
   }
 
   .chat-answer-logo {
     @apply flex flex-col
+  }
+
+  .chat-msg-text {
+    @apply whitespace-pre-line break-all;
   }
 }

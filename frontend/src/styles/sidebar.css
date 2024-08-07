@@ -24,15 +24,15 @@
   }
 
   .chatroom-folder {
-    @apply flex flex-row px-5 py-2 text-white bg-primary;
+    @apply flex flex-row items-center px-2 py-2 text-white bg-primary;
   }
 
   .chatroom-folder-text {
-    @apply ms-2 text-lg text-white;
+    @apply ms-2 text-white;
   }
 
   .chatroom {
-    @apply flex ps-8 pe-5 py-2 hover:font-semibold;
+    @apply flex px-5 py-2 hover:font-semibold;
   }
 
   .btn-newfolder {
