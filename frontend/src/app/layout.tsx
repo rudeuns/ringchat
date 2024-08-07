@@ -4,6 +4,7 @@ import { AuthProvider } from '@/context/AuthContext';
 import '@/styles/globals.css';
 import '@/styles/sidebar.css';
 import '@/styles/modal.css';
+import { LinkProvider } from '@/context/LinkContext';
 
 const notoSansKR = Noto_Sans_KR({ subsets: ['latin'] });
 
@@ -23,7 +24,9 @@ export default function RootLayout({
     <html lang="ko">
       <body className={notoSansKR.className}>
         <AuthProvider>
-          <main>{children}</main>
+          <LinkProvider>
+            <main>{children}</main>
+          </LinkProvider>
         </AuthProvider>
       </body>
     </html>
