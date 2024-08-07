@@ -56,16 +56,3 @@ def get_db():
         yield db
     finally:
         db.close()
-
-# def create_tables_if_not_exist(engine, base):
-#     """
-#     데이터베이스에 테이블이 존재하지 않을 경우 생성하는 함수
-#     """
-#     inspector = inspect(engine)  # 데이터베이스 메타데이터 검사 객체 생성
-#     existing_table_names = inspector.get_table_names()  # 기존 테이블 이름 목록 가져오기
-
-#     for table_name, table_obj in base.metadata.tables.items():
-#         if table_name not in existing_table_names:
-#             print(f"Creating table '{table_name}'...")
-#             table_obj.create(bind=engine)
-#             print(f"Table '{table_name}' created successfully.")
