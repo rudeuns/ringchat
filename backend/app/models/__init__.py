@@ -1,7 +1,14 @@
-from .users import Users
-from .folder import Folder
+from .tables import Users, Folders, Links, Vectors, ChatRooms, Link_Chatrooms, Messages, Scores
+# Message, Score
+
 
 __all__ = [
     "Users",  
-    "Folder"
+    "Folders",
+    "Links",
+    "Vectors",
+    "ChatRooms",
+    "Link_Chatrooms",
+    "Messages", 
+    "Scores"
 ]
