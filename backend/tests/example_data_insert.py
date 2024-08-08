@@ -5,6 +5,12 @@ from sqlalchemy.orm import Session
 from app.models.tables import Users, Folders, Links, Vectors, ChatRooms, Link_Chatrooms, Messages, Scores  
 
 
+def read_doc(file): 
+    with open(file, 'r', encoding='utf-8') as f:
+        docs = f.read()
+    return docs
+
+
 users_data = [
     {"email": "user1@example.com", "password": "password123", "user_name": "User1"},
     {"email": "user2@example.com", "password": "securepass", "user_name": "User2"},
@@ -16,13 +22,18 @@ folder_data = [
     {'folder_name': 'Default', 'user_id': 2},
     {'folder_name': 'Default', 'user_id': 3},
 ]
-
+    
 link_data = [
-    {'url': 'https://docs.python.org/3/', 'last_updated': func.sysdate(), 'sum_bookmark': 0, 'avg_score': None, 'sum_used_num': 0},
-    {'url': 'https://fastapi.tiangolo.com/ko/#_6', 'last_updated': func.sysdate(), 'sum_bookmark': 0, 'avg_score': None, 'sum_used_num': 0},
-    {'url': 'https://pytorch.org/docs/stable/torch.html#optimizations', 'last_updated': func.sysdate(), 'sum_bookmark': 0, 'avg_score': None, 'sum_used_num': 0},
-    {'url': 'https://www.tensorflow.org/api_docs', 'last_updated': func.sysdate(), 'sum_bookmark': 0, 'avg_score': None, 'sum_used_num': 0},
+    {'url': 'https://docs.python.org/3/', 'last_updated': func.sysdate(), 'sum_bookmark': 0, 'avg_score': None, 'sum_used_num': 0, 'link_title': '파이썬 공식 문서'},
+    {'url': 'https://fastapi.tiangolo.com/ko/#_6', 'last_updated': func.sysdate(), 'sum_bookmark': 0, 'avg_score': None, 'sum_used_num': 0, 'link_title': 'fastapi 공식 문서'},
+    {'url': 'https://pytorch.org/docs/stable/torch.html#optimizations', 'last_updated': func.sysdate(), 'sum_bookmark': 0, 'avg_score': None, 'sum_used_num': 0, 'link_title': 'pytorch 공식 문서'},
+    {'url': 'https://www.tensorflow.org/api_docs', 'last_updated': func.sysdate(), 'sum_bookmark': 0, 'avg_score': None, 'sum_used_num': 0, 'link_title': 'tensorflow 공식 문서'},
 ]
+
+documents = ['doc1.txt', 'doc2.txt', 'doc3.txt','doc4.txt']
+for i, doc in enumerate(documents): 
+    data = read_doc('tests/text_files/'+doc)
+    link_data[i]['link_document'] = data
 
 
 vector_data = [
