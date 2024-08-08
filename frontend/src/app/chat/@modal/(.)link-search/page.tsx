@@ -112,6 +112,10 @@ export default function ModalPage() {
               <p className="btn-text">선택 완료</p>
             </button>
           </div>
+          <div className="flex flex-row justify-center space-x-5">
+            <p>더 많은 링크가 필요하신가요?</p>
+            <button className="underline underline-offset-2">웹 검색 요청</button>
+          </div>
         </div>
       </div>
     </div>

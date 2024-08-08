@@ -24,7 +24,9 @@ def shutdown():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # When service starts.
-    start()
+    
+    # Base.metadata.drop_all(engine)
+    # start()
     
     yield
     
@@ -33,7 +35,14 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+from app.routers import folders, chatrooms, messages, links
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+app.include_router(folders.router, prefix='/api/v0')
+app.include_router(chatrooms.router, prefix='/api/v0')
+app.include_router(messages.router, prefix='/api/v0')
+app.include_router(links.router, prefix='/api/v0')
+
+
+# if __name__ == "__main__":
+#     import uvicorn
+#     uvicorn.run(app, host="0.0.0.0", port=8000)

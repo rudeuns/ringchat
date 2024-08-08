@@ -49,7 +49,6 @@ Session = scoped_session(SessionLocal)
 Base = declarative_base()
 
 # 6. 세션 컨텍스트 매니저 (with 문 사용 편의성)
-@contextmanager
 def get_db():
     db = Session()
     try:

@@ -18,7 +18,7 @@ export default function ChatRoom({ roomId, roomName, isSelected, onSelect }: Cha
 
   return (
     <button className="chatroom" onClick={handleClick}>
-      <p className={isSelected ? "font-semibold" : ""}>{roomName}</p>
+      <p className={isSelected ? "font-semibold chatroom-text" : "chatroom-text"}>{roomName}</p>
     </button>
   );
 }

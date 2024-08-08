@@ -6,6 +6,7 @@ export interface FolderData {
 export interface ChatRoomData {
   roomId: number;
   roomName: string;
+  folderId: number;
 }
 
 export interface ChatMessageData {
