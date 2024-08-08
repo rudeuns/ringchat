@@ -7,6 +7,10 @@ poetry.lock
 # chroma
 chroma_db
 
+# venv
+venv/
+.venv/
+
 # python library
 requirements.txt
 

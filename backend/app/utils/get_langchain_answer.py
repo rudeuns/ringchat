@@ -241,3 +241,4 @@ def get_langchain_answer(docs: List[Document], question: str, session_id: str):
             response = "No answer found."
 
     return response
+
