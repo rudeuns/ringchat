@@ -67,6 +67,8 @@ class Links(Base):
 
     link_id = Column(NUMBER, Sequence(db_user+'.link_id_seq'), primary_key=True)
     url = Column(VARCHAR2(2048), nullable=False, unique=True) 
+    link_title = Column(VARCHAR2(255), nullable=False)
+    link_document = Column(CLOB)
     last_updated = Column(Date, nullable=False)
     sum_bookmark = Column(NUMBER, default=0)
     avg_score = Column(NUMBER(3, 2), default=0.0)  
