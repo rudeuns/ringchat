@@ -32,7 +32,11 @@
   }
 
   .chatroom {
-    @apply flex px-5 py-2 hover:font-semibold;
+    @apply flex justify-start px-5 py-2 hover:font-semibold;
+  }
+
+  .chatroom-text {
+    @apply text-left whitespace-pre-line;
   }
 
   .btn-newfolder {

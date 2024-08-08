@@ -39,4 +39,4 @@ RUN chmod +x /usr/local/bin/poetry \
 RUN ls -l /usr/local/bin/poetry
 
 # Command to run the application
-CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

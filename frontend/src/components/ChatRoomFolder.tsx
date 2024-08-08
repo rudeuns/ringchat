@@ -57,6 +57,7 @@ export default function ChatRoomFolder({ folderId, folderName }: FolderData) {
             key={chatRoom.roomId} 
             roomId={chatRoom.roomId} 
             roomName={chatRoom.roomName} 
+            folderId={chatRoom.folderId}
             isSelected={selectedRoomId === chatRoom.roomId}
             onSelect={() => setSelectedRoomId(chatRoom.roomId)}
           />
