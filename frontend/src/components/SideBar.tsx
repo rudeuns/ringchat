@@ -1,6 +1,6 @@
 import { SmallLogo } from '@/components/common/Logos';
 import NewChatButton from '@/components/buttons/NewChatButton';
-import ChatRoomFolder from '@/components/ChatRoomFolder';
+import ChatRoomList from '@/components/ChatRoomList';
 import NewFolderButton from '@/components/buttons/NewFolderButton';
 
 export default function SideBar() {
@@ -10,9 +10,7 @@ export default function SideBar() {
         <SmallLogo />
         <NewChatButton />
       </div>
-      <div className="sidebar-mid">
-        <ChatRoomFolder name="DEFAULT" />
-      </div>
+      <ChatRoomList />
       <div className='sidebar-bottom'>
         <NewFolderButton />
       </div>
