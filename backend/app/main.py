@@ -24,7 +24,7 @@ def shutdown():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # When service starts.
-    start()
+    # start()
     
     yield
     

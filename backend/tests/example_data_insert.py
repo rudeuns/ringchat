@@ -12,67 +12,50 @@ def read_doc(file):
 
 
 users_data = [
-    {"email": "user1@example.com", "password": "password123", "user_name": "User1"},
-    {"email": "user2@example.com", "password": "securepass", "user_name": "User2"},
-    {"email": "user3@example.com", "password": "strongpass", "user_name": "User3"},
+    {"email": "user1@example.com", "password": "password123", "user_name": "User1"}
 ]
 
 folder_data = [
-    {'folder_name': 'Default', 'user_id': 1},
-    {'folder_name': 'Default', 'user_id': 2},
-    {'folder_name': 'Default', 'user_id': 3},
+    {'folder_name': 'Default', 'user_id': 1}
 ]
     
 link_data = [
-    {'url': 'https://docs.python.org/3/', 'last_updated': func.sysdate(), 'sum_bookmark': 0, 'avg_score': None, 'sum_used_num': 0, 'link_title': '파이썬 공식 문서'},
-    {'url': 'https://fastapi.tiangolo.com/ko/#_6', 'last_updated': func.sysdate(), 'sum_bookmark': 0, 'avg_score': None, 'sum_used_num': 0, 'link_title': 'fastapi 공식 문서'},
-    {'url': 'https://pytorch.org/docs/stable/torch.html#optimizations', 'last_updated': func.sysdate(), 'sum_bookmark': 0, 'avg_score': None, 'sum_used_num': 0, 'link_title': 'pytorch 공식 문서'},
-    {'url': 'https://www.tensorflow.org/api_docs', 'last_updated': func.sysdate(), 'sum_bookmark': 0, 'avg_score': None, 'sum_used_num': 0, 'link_title': 'tensorflow 공식 문서'},
+    {'url': 'https://yooloo.tistory.com/60', 'last_updated': func.sysdate(), 'sum_bookmark': 0, 'avg_score': None, 'sum_used_num': 0, 'link_title': '파이썬 __main__ 이란'},
+    {'url': 'https://sean-j.tistory.com/37', 'last_updated': func.sysdate(), 'sum_bookmark': 0, 'avg_score': None, 'sum_used_num': 0, 'link_title': 'Document loaders'},
 ]
 
-documents = ['doc1.txt', 'doc2.txt', 'doc3.txt','doc4.txt']
+documents = ['doc1.txt', 'doc2.txt']
 for i, doc in enumerate(documents): 
-    data = read_doc('backend/tests/text_files/'+doc)
+    data = read_doc('tests/text_files/'+doc)
     link_data[i]['link_document'] = data
 
 
 vector_data = [
     {'total_vector': [[0.1, 0.2, 0.3, 0.1, 0.2, 0.3],[0.2, 0.1, 0.4, 0.1, 0.2, 0.3]], 'summary_vector': [0.2, 0.1, 0.4, 0.1, 0.2, 0.3], 'created_time': func.sysdate(), 'link_id': 1},
-    {'total_vector': [[0.1, 0.2, 0.3, 0.1, 0.2, 0.3],[0.2, 0.1, 0.4, 0.1, 0.2, 0.3]], 'summary_vector': [0.2, 0.1, 0.4, 0.1, 0.2, 0.3], 'created_time': func.sysdate(), 'link_id': 2},
-    {'total_vector': [[0.1, 0.2, 0.3, 0.1, 0.2, 0.3],[0.2, 0.1, 0.4, 0.1, 0.2, 0.3]], 'summary_vector': [0.2, 0.1, 0.4, 0.1, 0.2, 0.3], 'created_time': func.sysdate(), 'link_id': 3},
-    {'total_vector': [[0.1, 0.2, 0.3, 0.1, 0.2, 0.3],[0.2, 0.1, 0.4, 0.1, 0.2, 0.3]], 'summary_vector': [0.2, 0.1, 0.4, 0.1, 0.2, 0.3], 'created_time': func.sysdate(), 'link_id': 4},
-    {'total_vector': [[0.1, 0.2, 0.3, 0.1, 0.2, 0.3],[0.2, 0.1, 0.4, 0.1, 0.2, 0.3]], 'summary_vector': [0.2, 0.1, 0.4, 0.1, 0.2, 0.3], 'created_time': func.sysdate(), 'link_id': 1}
+    {'total_vector': [[0.1, 0.2, 0.3, 0.1, 0.2, 0.3],[0.2, 0.1, 0.4, 0.1, 0.2, 0.3]], 'summary_vector': [0.2, 0.1, 0.4, 0.1, 0.2, 0.3], 'created_time': func.sysdate(), 'link_id': 2}
 ]
 
 
 chat_room_data = [
     {'room_name': '파이썬에 대한 질문', 'bookmark': 1, 'created_time': func.sysdate(), 'user_id': 1, 'folder_id':1},
-    {'room_name': 'fastapi 사용법', 'bookmark': 0, 'created_time': func.sysdate(), 'user_id': 2, 'folder_id':2},
-    {'room_name': '텐서플로우 vs 파이토치', 'bookmark': 1, 'created_time': func.sysdate(), 'user_id': 3, 'folder_id':3},
-    {'room_name': '파이썬 공부법', 'bookmark': 1, 'created_time': func.sysdate(), 'user_id': 3, 'folder_id':3},
+    {'room_name': 'Document loaders 사용법', 'bookmark': 0, 'created_time': func.sysdate(), 'user_id': 1, 'folder_id':1}
 ]
 
 link_chat_room_data = [
     {'link_id': 1, 'room_id': 1},
-    {'link_id': 2, 'room_id': 2},
-    {'link_id': 3, 'room_id': 3},
-    {'link_id': 4, 'room_id': 3},
-    {'link_id': 1, 'room_id': 4},
+    {'link_id': 2, 'room_id': 2}
 ]
 
 message_data = [
-    {'question': '파이썬 list, dictionary, set 사용법 알려줘', 'answer': '파이썬 list는 []을 사용하시구요, dictionary는 {}을 사용하시구요, set은 set()으로 사용하세요.', 'created_time': func.sysdate(), 'room_id': 1},
-    {'question': 'fastapi를 활용해서 api를 만들고 싶어.', 'answer': 'fastapi quick start를 참고하세요.', 'created_time': func.sysdate(), 'room_id': 2},
-    {'question': '텐서플로우랑 파이토치 비교해줘.', 'answer': '텐서플로우는 AI 서비스에 최적화 되어 있어서 기업이 많이 쓰고, 파이토치는 연구용으로 많이 사용되요.', 'created_time': func.sysdate(), 'room_id': 3},
-    {'question': '파이썬 공부가 처음인데 어떻게 해?', 'answer': '기본서 책 사서 공부하세요.', 'created_time': func.sysdate(), 'room_id': 4},
-    {'question': '어떤 책 사야되는데?', 'answer': '서점에서 베스트 셀러로 구매하세요.', 'created_time': func.sysdate(), 'room_id': 4},
+    {'question': '파이썬에서 __main__가 무슨 역할을 해?', 'answer': '파이썬에서 __main__은 최상위 코드 환경을 나타내는 특별한 문자열입니다. 즉, 특정 파이썬 파일이 직접 실행될 때, 해당 파일의 __name__ 변수에는 "__main__"이라는 값이 할당됩니다. 반면, 해당 파일이 다른 파일에서 import 될 때에는 __name__ 변수에는 파일 자체의 이름이 할당됩니다.', 'created_time': func.sysdate(), 'room_id': 1},
+    {'question': '실제로 사용하는 예시 들어줘.', 'answer': 'calculator.py라는 파일을 만들어 덧셈, 뺄셈 기능을 제공하는 계산기 모듈을 만들고, 이 모듈을 다른 곳에서 import 하거나 직접 실행할 수 있도록 __main__을 활용하는 예시입니다. def subtract(x, y): """두 숫자를 빼는 함수""" return x - y if __name__ == "__main__": subtract(3, 5)', 'created_time': func.sysdate(), 'room_id': 1},
+    {'question': 'lanchain에서 document loader가 뭐야?', 'answer': 'LangChain에서 Document Loader는 외부 데이터 소스에서 텍스트 데이터를 가져와 LangChain이 처리할 수 있는 형식으로 변환하는 핵심 구성 요소', 'created_time': func.sysdate(), 'room_id': 2},
+    {'question': '예시 코드 작성해줘.', 'answer': 'from langchain.document_loaders import WebBaseLoader loader = WebBaseLoader("https://en.wikipedia.org/wiki/Artificial_intelligence") documents = loader.load()', 'created_time': func.sysdate(), 'room_id': 2},
 ]
 
 scores_data = [
     {'score': 2, 'msg_id': 1},
-    {'score': 3, 'msg_id': 3},
-    {'score': 1, 'msg_id': 4},
-    {'score': 1, 'msg_id': 5},
+    {'score': 3, 'msg_id': 3}
 ]
 
 def add_users(db: Session, users_data: list[dict]):
