@@ -32,7 +32,7 @@ link_data = [
 
 documents = ['doc1.txt', 'doc2.txt', 'doc3.txt','doc4.txt']
 for i, doc in enumerate(documents): 
-    data = read_doc('tests/text_files/'+doc)
+    data = read_doc('backend/tests/text_files/'+doc)
     link_data[i]['link_document'] = data
 
 
