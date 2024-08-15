@@ -51,8 +51,8 @@ async def create_chat_answer(roomId: int, request: ChatMessageRequest, db: Sessi
             linked_documents.append(Document(page_content=link.link_document, title=link.link_title))
             
 
-    # answer = get_langchain_answer(linked_documents, session_id=str(roomId))
-    answer = f"Answer to '{request.question}'"
+    answer = get_langchain_answer(linked_documents, request.question, session_id=str(roomId))
+    # answer = f"Answer to '{request.question}'"
 
     now_utc = datetime.now()
     kst_offset = timedelta(hours=9)
