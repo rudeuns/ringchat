@@ -1,5 +1,3 @@
-import json
-
 import orjson
 from sqlalchemy import func
 from sqlalchemy import insert

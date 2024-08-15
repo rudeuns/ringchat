@@ -10,16 +10,21 @@ from langchain.schema import Document
 
 class BeautifulSoupSelectorTransformer(BeautifulSoupTransformer):
     """
-    A transformer that uses BeautifulSoup to select specific elements from HTML documents and extracts their text content.
-    Supports content extraction from various website types (Tistory, Stack Overflow, etc.).
+    A transformer that uses BeautifulSoup to select specific elements
+    from HTML documents and extracts their text content.
+    Supports content extraction
+    from various website types (Tistory, Stack Overflow, etc.).
 
     Args:
-        selector (Union[str, list[str]]): A CSS selector or a list of CSS selectors to select the HTML elements to extract.
-        document_type (str): The type of website the document is from ('tistory', 'stackoverflow', 'official', etc.).
+        selector (Union[str, list[str]]): A CSS selector or a list of CSS selectors
+        to select the HTML elements to extract.
+        document_type (str): The type of website the document is from
+        ('tistory', 'stackoverflow', 'official', etc.).
 
     Methods:
         normalize_newlines(self, text): Normalizes newlines in the given text.
-        transform_documents(self, documents: list[Document]) -> list[Document]: Transforms the given list of documents.
+        transform_documents(self, documents: list[Document])
+        -> list[Document]: Transforms the given list of documents.
     """
 
     def __init__(self, selector: Union[str, list[str]], document_type: str):

@@ -5,9 +5,7 @@ from sqlalchemy import Column
 from sqlalchemy import Date
 from sqlalchemy import DateTime
 from sqlalchemy import ForeignKey
-from sqlalchemy import JSON
 from sqlalchemy import Sequence
-from sqlalchemy import Table
 from sqlalchemy import TIMESTAMP
 from sqlalchemy.dialects.oracle import NUMBER
 from sqlalchemy.dialects.oracle import VARCHAR2

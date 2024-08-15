@@ -13,7 +13,6 @@ from app.database import get_db
 from app.models.tables import Link_Chatrooms
 from app.models.tables import Links
 from app.models.tables import Messages
-from app.models.tables import Vectors
 from app.utils.get_langchain_answer import get_langchain_answer
 
 router = APIRouter()

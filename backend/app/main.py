@@ -4,7 +4,6 @@ from fastapi import FastAPI
 
 from app.database import Base
 from app.database import engine
-from app.database import get_db
 from app.database import SessionLocal
 from app.models.tables import ChatRooms
 from app.models.tables import Folders
@@ -14,6 +13,10 @@ from app.models.tables import Messages
 from app.models.tables import Scores
 from app.models.tables import Users
 from app.models.tables import Vectors
+from app.routers import chatrooms
+from app.routers import folders
+from app.routers import links
+from app.routers import messages
 from tests.example_data_insert import example_insert
 
 
@@ -56,10 +59,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-from app.routers import chatrooms
-from app.routers import folders
-from app.routers import links
-from app.routers import messages
 
 app.include_router(folders.router, prefix="/api/v0")
 app.include_router(chatrooms.router, prefix="/api/v0")

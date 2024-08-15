@@ -12,7 +12,6 @@ from app.database import get_db
 from app.models.tables import ChatRooms
 from app.models.tables import Link_Chatrooms
 from app.models.tables import Links
-from app.models.tables import Vectors
 
 router = APIRouter()
 
