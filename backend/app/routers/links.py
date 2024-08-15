@@ -11,6 +11,7 @@ from app.models.tables import Vectors
 
 router = APIRouter()
 
+
 class Link(BaseModel):
     url: str
     avgScore: float
@@ -24,7 +25,7 @@ async def search_links(query: str, db: Session = Depends(get_db)):
 
     vectors = db.query(Vectors).all()
 
-    threshold =  0.5
+    threshold = 0.5
     similarities = []
 
     for vector in vectors:
@@ -34,9 +35,11 @@ async def search_links(query: str, db: Session = Depends(get_db)):
     #     summary_vector = np.array(vector.summary_vector)
     #     similarity = cosine_similarity(query_vector, summary_vector)
     #     if similarity > threshold:
-            # similarities.append((vector.link_id, similarity))
-    
-    top_similarities = sorted(similarities, key=lambda x: x[1], reverse=True)[:10]
+    # similarities.append((vector.link_id, similarity))
+
+    top_similarities = sorted(similarities, key=lambda x: x[1], reverse=True)[
+        :10
+    ]
 
     top_link_ids = [item[0] for item in top_similarities]
     top_links = db.query(Links).filter(Links.link_id.in_(top_link_ids)).all()
@@ -46,7 +49,7 @@ async def search_links(query: str, db: Session = Depends(get_db)):
             url=link.url,
             avgScore=link.avg_score,
             sumUsedNum=link.sum_used_num,
-            sumBookmark=link.sum_bookmark
+            sumBookmark=link.sum_bookmark,
         )
         for link in top_links
     ]

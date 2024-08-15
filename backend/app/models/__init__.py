@@ -11,12 +11,12 @@ from .tables import Vectors
 
 
 __all__ = [
-    "Users",  
+    "Users",
     "Folders",
     "Links",
     "Vectors",
     "ChatRooms",
     "Link_Chatrooms",
-    "Messages", 
-    "Scores"
+    "Messages",
+    "Scores",
 ]
