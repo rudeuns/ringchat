@@ -16,6 +16,11 @@ python-dotenv = "^1.0.1"
 oracledb = "^2.3.0"
 chromadb = "^0.5.5"
 langchain-huggingface = "^0.0.3"
+isort = "^5.13.2"
+black = "^24.8.0"
+flake8 = "^7.1.1"
+flake8-pyproject = "^1.2.3"
+flake8-mutable = "^1.2.0"
 
 [build-system]
 requires = ["poetry-core"]
