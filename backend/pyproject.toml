@@ -25,3 +25,37 @@ flake8-mutable = "^1.2.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+profile = "google"            # Use the Google style guide for import sorting
+line_length = 80    
+multi_line_output = 3         # Set multi-line import statement output style (3: vertical hanging indent)
+include_trailing_comma = true # Add trailing commas to multi-line imports
+force_grid_wrap = 0           # Do not force line wrapping for multi-line imports
+use_parentheses = true        # Use parentheses for multi-line imports (using () in multi-line imports) 
+
+[tool.black]
+line-length = 80           # Set maximum line length to 80 characters
+target-version = ['py310'] # Specify the target Python version 
+include = '\.pyi?$'        # Apply black to Python files and Python stub files
+exclude = '''              # Exclude directories or file patterns from black formatting
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+''' 
+
+[tool.flake8]
+max-line-length = 80 
+extend-ignore = ["E203"]   # Ignore error including whitespace before colon
+
+plugins = [
+    "flake8_mutable"       # Prevent the use of mutable objects as default arguments in functions
+]
