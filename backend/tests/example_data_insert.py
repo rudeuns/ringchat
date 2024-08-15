@@ -1,8 +1,18 @@
 import json
+
 import orjson
-from sqlalchemy import func, insert
+from sqlalchemy import func
+from sqlalchemy import insert
 from sqlalchemy.orm import Session
-from app.models.tables import Users, Folders, Links, Vectors, ChatRooms, Link_Chatrooms, Messages, Scores  
+
+from app.models.tables import ChatRooms
+from app.models.tables import Folders
+from app.models.tables import Link_Chatrooms
+from app.models.tables import Links
+from app.models.tables import Messages
+from app.models.tables import Scores
+from app.models.tables import Users
+from app.models.tables import Vectors
 
 
 def read_doc(file): 

@@ -1,5 +1,6 @@
 import os
 import sys
+
 from dotenv import load_dotenv
 from langchain_core.documents import Document
 from utils.get_langchain_answer import get_langchain_answer

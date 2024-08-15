@@ -1,10 +1,10 @@
 import re
-from urllib.parse import urlparse
 from typing import Union
+from urllib.parse import urlparse
 
+from bs4 import BeautifulSoup
 from langchain.document_loaders import AsyncHtmlLoader
 from langchain.document_transformers import BeautifulSoupTransformer
-from bs4 import BeautifulSoup
 from langchain.schema import Document
 
 

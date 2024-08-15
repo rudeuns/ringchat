@@ -1,10 +1,21 @@
 import json
-from sqlalchemy.types import TypeDecorator
-from sqlalchemy import Column, Sequence, ForeignKey, Date, JSON, DateTime, CLOB, TIMESTAMP, Table
-from sqlalchemy.dialects.oracle import NUMBER, VARCHAR2
-from sqlalchemy.orm import relationship
 
-from app.database import Base, DB_USER
+from sqlalchemy import CLOB
+from sqlalchemy import Column
+from sqlalchemy import Date
+from sqlalchemy import DateTime
+from sqlalchemy import ForeignKey
+from sqlalchemy import JSON
+from sqlalchemy import Sequence
+from sqlalchemy import Table
+from sqlalchemy import TIMESTAMP
+from sqlalchemy.dialects.oracle import NUMBER
+from sqlalchemy.dialects.oracle import VARCHAR2
+from sqlalchemy.orm import relationship
+from sqlalchemy.types import TypeDecorator
+
+from app.database import Base
+from app.database import DB_USER
 
 db_user = DB_USER.lower()
 

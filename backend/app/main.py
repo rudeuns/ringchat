@@ -2,10 +2,20 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from app.models.tables import Users, Folders, Links, Vectors, ChatRooms, Link_Chatrooms, Messages, Scores
-from app.database import get_db, engine, Base, SessionLocal
-
+from app.database import Base
+from app.database import engine
+from app.database import get_db
+from app.database import SessionLocal
+from app.models.tables import ChatRooms
+from app.models.tables import Folders
+from app.models.tables import Link_Chatrooms
+from app.models.tables import Links
+from app.models.tables import Messages
+from app.models.tables import Scores
+from app.models.tables import Users
+from app.models.tables import Vectors
 from tests.example_data_insert import example_insert
+
 
 def start():   
     Base.metadata.create_all(bind=engine, tables=[Users.__table__, Folders.__table__,
@@ -34,7 +44,10 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-from app.routers import folders, chatrooms, messages, links
+from app.routers import chatrooms
+from app.routers import folders
+from app.routers import links
+from app.routers import messages
 
 app.include_router(folders.router, prefix='/api/v0')
 app.include_router(chatrooms.router, prefix='/api/v0')

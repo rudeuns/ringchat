@@ -1,12 +1,14 @@
+from contextlib import contextmanager
 import os
-from dotenv import load_dotenv
 from pathlib import Path
 
+from dotenv import load_dotenv
 import oracledb
-from sqlalchemy import create_engine, inspect
-from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy import create_engine
+from sqlalchemy import inspect
 from sqlalchemy.ext.declarative import declarative_base
-from contextlib import contextmanager
+from sqlalchemy.orm import scoped_session
+from sqlalchemy.orm import sessionmaker
 
 # 1. 환경 변수
 load_dotenv()
