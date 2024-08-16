@@ -1,12 +1,11 @@
 import os
-from dotenv import load_dotenv
-from pathlib import Path
 
+from dotenv import load_dotenv
 import oracledb
-from sqlalchemy import create_engine, inspect
-from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from contextlib import contextmanager
+from sqlalchemy.orm import scoped_session
+from sqlalchemy.orm import sessionmaker
 
 # 1. 환경 변수
 load_dotenv()
@@ -14,11 +13,16 @@ load_dotenv()
 DB_USER = os.getenv("DB_USER")
 DB_PWD = os.getenv("DB_PWD")
 DB_DSN = os.getenv("DB_DSN")
-DB_CONFIG_DIR = os.path.join(os.path.dirname(__file__), os.getenv("DB_CONFIG_DIR"))
-DB_WALLET_LOCATION = os.path.join(os.path.dirname(__file__), os.getenv("DB_WALLET_LOCATION"))
+DB_CONFIG_DIR = os.path.join(
+    os.path.dirname(__file__), os.getenv("DB_CONFIG_DIR")
+)
+DB_WALLET_LOCATION = os.path.join(
+    os.path.dirname(__file__), os.getenv("DB_WALLET_LOCATION")
+)
 DB_WALLET_PASSWORD = os.getenv("DB_WALLET_PWD")
 
-# 2. 연결 설정 함수 분리 
+
+# 2. 연결 설정 함수 분리
 def get_oracle_connection():
     """Oracle 데이터베이스 연결을 반환하는 함수"""
     try:
@@ -35,10 +39,11 @@ def get_oracle_connection():
         print(f"Oracle Database 연결 오류: {e}")
         raise  # 예외를 다시 발생시켜 상위 호출자에게 알림
 
+
 # 3. SQLAlchemy 엔진 생성 (ORM 연동)
 engine = create_engine(
     "oracle+oracledb://",
-    creator=get_oracle_connection  # 연결 생성 함수를 creator로 전달
+    creator=get_oracle_connection,  # 연결 생성 함수를 creator로 전달
 )
 
 # 4. 세션 관리 (스레드 안전성)
@@ -47,6 +52,7 @@ Session = scoped_session(SessionLocal)
 
 # 5. Base 모델 정의 (ORM 모델 기반)
 Base = declarative_base()
+
 
 # 6. 세션 컨텍스트 매니저 (with 문 사용 편의성)
 def get_db():

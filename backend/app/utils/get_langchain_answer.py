@@ -1,28 +1,35 @@
-import tiktoken
-import warnings
 import os
-from typing import List, Union
-from langchain_openai import ChatOpenAI
-from langchain_core.documents import Document
-from langchain_community.vectorstores import Chroma
-from langchain.prompts import PromptTemplate
-from langchain.chains import create_history_aware_retriever, create_retrieval_chain
+from typing import List
+import warnings
+
+from langchain.chains import create_history_aware_retriever
+from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.chat_history import BaseChatMessageHistory
-from langchain_core.callbacks import StreamingStdOutCallbackHandler
-from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.chat_message_histories import ChatMessageHistory
-from langchain_huggingface import HuggingFaceEmbeddings 
+from langchain_community.vectorstores import Chroma
+from langchain_core.callbacks import StreamingStdOutCallbackHandler
+from langchain_core.chat_history import BaseChatMessageHistory
+from langchain_core.documents import Document
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import MessagesPlaceholder
+from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_openai import ChatOpenAI
+import tiktoken
 
 # 특정 경고 무시
-warnings.filterwarnings("ignore", category=FutureWarning, module="transformers.tokenization_utils_base")
+warnings.filterwarnings(
+    "ignore",
+    category=FutureWarning,
+    module="transformers.tokenization_utils_base",
+)
 
 # TOKENIZERS_PARALLELISM 설정
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 store = {}
+
 
 def get_text_chunks(text: List[Document]) -> List[Document]:
     """
@@ -36,10 +43,13 @@ def get_text_chunks(text: List[Document]) -> List[Document]:
     """
     text_splitter = RecursiveCharacterTextSplitter(
         # 문서가 클 경우 parameter 조정 필요
-        chunk_size=1000, chunk_overlap=200, length_function=tiktoken_len
+        chunk_size=1000,
+        chunk_overlap=200,
+        length_function=tiktoken_len,
     )
     chunks = text_splitter.split_documents(text)
     return chunks
+
 
 def tiktoken_len(text: str) -> int:
     """
@@ -55,6 +65,7 @@ def tiktoken_len(text: str) -> int:
     tokens = tokenizer.encode(text)
     return len(tokens)
 
+
 def get_embedding_model() -> HuggingFaceEmbeddings:
     """
     Get the embedding model.
@@ -69,6 +80,7 @@ def get_embedding_model() -> HuggingFaceEmbeddings:
         encode_kwargs={"normalize_embeddings": True},
     )
 
+
 def get_vectorstore(text_chunks: List) -> Chroma:
     """
     Vectorize chunks of text and store them in a database.
@@ -81,8 +93,11 @@ def get_vectorstore(text_chunks: List) -> Chroma:
     """
 
     embeddings = get_embedding_model()
-    db = Chroma.from_documents(text_chunks, embeddings, persist_directory="./chroma_db")
+    db = Chroma.from_documents(
+        text_chunks, embeddings, persist_directory="./chroma_db"
+    )
     return db
+
 
 def create_openai_llm() -> ChatOpenAI:
     """
@@ -100,6 +115,7 @@ def create_openai_llm() -> ChatOpenAI:
         callbacks=[StreamingStdOutCallbackHandler()],
         temperature=0,
     )
+
 
 def get_model(model: str) -> ChatOpenAI:
     """
@@ -126,6 +142,7 @@ def get_model(model: str) -> ChatOpenAI:
     print(f"{model} model!!!")
 
     return llm
+
 
 def get_conversation_chain(llm, vectorstore):
     """
@@ -178,9 +195,12 @@ def get_conversation_chain(llm, vectorstore):
     )
 
     question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
-    rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
+    rag_chain = create_retrieval_chain(
+        history_aware_retriever, question_answer_chain
+    )
 
     return rag_chain
+
 
 # TODO: Use databases to manage session history
 def get_session_history(session_id: str) -> BaseChatMessageHistory:
@@ -199,22 +219,23 @@ def get_session_history(session_id: str) -> BaseChatMessageHistory:
         store[session_id] = ChatMessageHistory()
     return store[session_id]
 
+
 def get_langchain_answer(docs: List[Document], question: str, session_id: str):
 
     model = "openai"
     chunks = get_text_chunks(docs)
     vectorstore = get_vectorstore(chunks)
-    
-    # TODO: 유사도 
+
+    # TODO: 유사도
     # 임베딩 모델 가져오기
     # embedding_model = get_embedding_model()
-    
+
     # 질문을 임베딩하여 벡터화
     # question_vector = embedding_model.embed([question])[0]
-    
+
     # 유사도 검색
     # results = vectorstore.similarity_search_by_vector(question_vector, k=1)
-    
+
     llm = get_model(model)
     chain = get_conversation_chain(llm, vectorstore)
 
@@ -226,7 +247,7 @@ def get_langchain_answer(docs: List[Document], question: str, session_id: str):
             history_messages_key="chat_history",
             output_messages_key="answer",
         )
-    
+
         result = conversational_rag_chain.invoke(
             {"input": question},
             config={"configurable": {"session_id": session_id}},
@@ -235,10 +256,9 @@ def get_langchain_answer(docs: List[Document], question: str, session_id: str):
         # 결과 출력
         print("Result:", result)
 
-        if 'answer' in result:
-            response = result['answer']
+        if "answer" in result:
+            response = result["answer"]
         else:
             response = "No answer found."
 
     return response
-
