@@ -3,15 +3,18 @@
 
 <h4>Ringchat 🤖 is a URL-powered 🔗 chatbot service.</h4>
 <p>
-"RingChat" is a portmanteau of "Ring" and "Chatbot." The "Ring" symbolizes the connection between the document contained within the URL link, the chatbot, and the user. In Korean, the first syllables of "Ring" and "link" are the same, allowing for a natural association. Additionally, "Ring" evokes the image of a ring, implying trustworthiness and reliability in the answers provided by RingChat.
+"RingChat" is a portmanteau of "Ring" and "Chatbot". The "Ring" symbolizes the connection between the document contained within the URL link, the chatbot, and the user. In Korean, the first syllables of "Ring" and "link" are the same, allowing for a natural association. Additionally, "Ring" evokes the image of a ring, implying reliability in the answers provided by RingChat.
 </p>
 
 </div>
 
 ## <div align="center">RingChat🤖 Key Features</div>
 
-1️⃣ `Recommendation Links` up to 3 urls <br>
+1️⃣ `Recommend Links along with 3 metrics` <br>
 
+- Score
+- Times attached 
+- Total number of bookmark
 
 2️⃣ `Customized document analysis` <br>
 
@@ -57,7 +60,7 @@ Each `tech stack` is accompanied by a discussion of its `benefits`, `drawbacks`,
 | Langchain | This project aims to overcome the limitations of existing LLMs. Langchain, one of the most popular and intuitive frameworks that facilitates in-context learning, is a natural choice for achieving this goal. | It's easy to extend various functions with support for a wide range of tools. <br> Development is relatively easy with an intuitive API. | The high level of abstraction can make fine-grained control difficult. <br> Since it's a relatively new framework, there might be challenges in acquiring information and a higher likelihood of encountering bugs |
 | Next.js | The only person on the team who handles frontend development is proficient in Next.js. | SSR, SSG support <br> Improved search engine optimization <br> Active community | For pages where data changes frequently, SSR can cause performance degradation as the server needs to render the page every time it's requested. <br> Understanding React is necessary, which can create a barrier to entry. |
 | Oracle 23ai | It supports Vector columns, enabling similarity search within the database. Similarity search was expected to be frequently used for URL recommendations in this project. | Direct AI model execution within the DB. <br> AI Vector Search support. <br> Enhanced security with SQL Firewall| Relatively high licensing fees <br> There is a barrier to entry as it is more difficult to handle than other DBs. <br> Relatively little reference material |
-| OpenAI | The gpt-4o-mini model offers good performance at a relatively low credit cost. <br> 충전된 Once the charged credits are exhausted, no additional charges will occur. <br> Code-related answers are superior compared to Gemini | Answers are less likely to be truncated in the middle <br> Decent performance for the cost | The maximum token limit is lower compared to Gemini <br> Multimodal processing capabilities are less developed compared to Gemini |
+| OpenAI | The gpt-4o-mini model offers good performance at a relatively low credit cost. <br> Once the charged credits are exhausted, no additional charges will occur. <br> Code-related answers are superior compared to Gemini | Answers are less likely to be truncated in the middle <br> Decent performance for the cost | The maximum token limit is lower compared to Gemini <br> Multimodal processing capabilities are less developed compared to Gemini |
 | OCI free tier | Because it provides two free VMs, each with an AMD CPU and 1GB of RAM.  | Two VM instance free forever <br> No worries about additional charges | The resources provided are inadequate for running actual services, therefore requiring an additional charge. |
 
 
