@@ -1,9 +1,9 @@
 # Use the official Python image from the Docker Hub
-FROM python:3.10-slim-buster
+FROM python:3.10-slim
 
 # Set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/usr/local/bin/python3.10
 
 # Install necessary system dependencies
