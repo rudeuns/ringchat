@@ -1,66 +1,29 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
-export async function fetchServer(req: NextRequest, url: string, options: RequestInit = {}) {
-  const token = req.headers.get('authorization')?.split(' ')[1];
-  if (!token) {
-    return NextResponse.json({ message: 'No token found' }, { status: 401 });
-  }
+export async function fetchServer(path: string, options: RequestInit = {}) {
+  const url = `${process.env.NEXT_PUBLIC_API_URL}${path}`;
 
-  const headers = {
+  const headers = new Headers({
     ...options.headers,
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`,
-  };
+    "Content-Type": "application/json",
+  });
 
   try {
     const res = await fetch(url, {
       ...options,
       headers,
+      credentials: "include",
     });
 
-    if (!res.ok) {
-      const errorMessage = `Fetch response error: ${res.status} ${res.statusText}`;
-      console.error(errorMessage);
-      return NextResponse.json({ message: errorMessage }, { status: res.status });
-    }
-
-    const data = await res.json();
-    return NextResponse.json(data, { status: 200 });
+    return res;
   } catch (error) {
-    const errorMessage = `Error during fetch: ${error}`;
-    console.error(errorMessage);
-    return NextResponse.json({ message: errorMessage }, { status: 500 });
-  }
-}
-
-export async function fetchClient(url: string, options: RequestInit = {}) {
-  const token = localStorage.getItem('token');
-  if (!token) {
-    console.error('No token found');
-    throw new Error('No token found');
-  }
-
-  const headers = {
-    ...options.headers,
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`,
-  };
-
-  try {
-    const res = await fetch(url, {
-      ...options,
-      headers,
-    });
-
-    if (!res.ok) {
-      const errorMessage = `Fetch response error: ${res.status} ${res.statusText}`;
-      console.error(errorMessage);
-      throw new Error(errorMessage);
-    }
-
-    return await res.json();
-  } catch (error) {
-    console.error(`Error during fetch: ${error}`);
-    throw error;
+    console.log(`Error occurred while processing API request: ${error}`);
+    return NextResponse.json(
+      {
+        detail: "Error occurred while processing API request.",
+        code: "NETWORK_ERROR",
+      },
+      { status: 500 },
+    );
   }
 }
