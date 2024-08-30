@@ -3,6 +3,7 @@ poetry.lock
 
 # local env files
 .env
+.env.*
 
 # DB
 chroma_db
@@ -20,3 +21,7 @@ venv/
 
 # pycache
 __pycache__/
+
+# alembic
+alembic/
+alembic.ini
