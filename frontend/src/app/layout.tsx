@@ -1,18 +1,14 @@
-import type { Metadata } from 'next';
-import { Noto_Sans_KR } from 'next/font/google';
-import { AuthProvider } from '@/context/AuthContext';
-import '@/styles/globals.css';
-import '@/styles/sidebar.css';
-import '@/styles/modal.css';
-import { LinkProvider } from '@/context/LinkContext';
+import type { Metadata } from "next";
+import { Noto_Sans_KR } from "next/font/google";
+import "@/styles/globals.css";
 
-const notoSansKR = Noto_Sans_KR({ subsets: ['latin'] });
+const notoSansKR = Noto_Sans_KR({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'RingChat',
+  title: "RingChat",
   icons: {
-    icon: '/favicon.svg'
-  }
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
@@ -23,11 +19,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={notoSansKR.className}>
-        <AuthProvider>
-          <LinkProvider>
-            <main>{children}</main>
-          </LinkProvider>
-        </AuthProvider>
+        <main>{children}</main>
       </body>
     </html>
   );
