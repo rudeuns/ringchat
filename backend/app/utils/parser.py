@@ -2,8 +2,8 @@ import re
 from urllib.parse import urlparse
 from typing import Union
 
-from langchain.document_loaders import AsyncHtmlLoader
-from langchain.document_transformers import BeautifulSoupTransformer
+from langchain_community.document_loaders import AsyncHtmlLoader
+from langchain_community.document_transformers import BeautifulSoupTransformer
 from bs4 import BeautifulSoup
 from langchain.schema import Document
 
