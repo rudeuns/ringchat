@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { fetchServer } from "@/lib/fetch";
+import { fetchClient } from "@/lib/fetch";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -26,16 +26,16 @@ export default function LoginForm() {
 
   const handleSubmitForm = async () => {
     if (!email) {
-      alert("이메일을 입력해주세요.");
+      alert("이메일을 입력해 주세요.");
       return;
     }
     if (!password) {
-      alert("비밀번호를 입력해주세요.");
+      alert("비밀번호를 입력해 주세요.");
       return;
     }
 
     try {
-      const res = await fetchServer("/auth/login", {
+      const res = await fetchClient("/auth/login", {
         method: "POST",
         body: JSON.stringify({
           email: email,
@@ -48,21 +48,25 @@ export default function LoginForm() {
         return;
       }
 
-      const data = await res.json();
-      switch (data.code) {
+      const result = await res.json();
+      switch (result.code) {
         case "INVALID_EMAIL":
-          alert("이메일이 일치하지 않습니다. 다시 입력해주세요.");
+          alert(
+            "입력하신 이메일로 등록된 계정이 없습니다. 이메일을 다시 확인해 주세요.",
+          );
           break;
         case "INVALID_PWD":
-          alert("비밀번호가 일치하지 않습니다. 다시 입력해주세요.");
+          alert("비밀번호가 일치하지 않습니다. 다시 입력해 주세요.");
           break;
         default:
-          alert("오류가 발생했습니다. 다시 시도해주세요.");
-          console.log(`Error occurred while logging in: ${data.code}`);
+          alert("로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+          console.log(`Error occurred while logging in: ${result.code}`);
           break;
       }
     } catch (error) {
-      alert("예기치 않은 오류가 발생했습니다.");
+      alert(
+        "로그인 중 예기치 않은 오류가 발생했습니다. 관리자에게 문의하시거나 잠시 후 다시 시도해 주세요.",
+      );
       console.log(`Unexpected error occurred while logging in: ${error}`);
     }
   };
