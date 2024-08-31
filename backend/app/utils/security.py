@@ -1,6 +1,7 @@
 import jwt
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
+from fastapi import Request, Response
 from fastapi.security import OAuth2PasswordBearer
 import app.utils.response as response
 import os
@@ -56,18 +57,25 @@ def create_access_token(data: dict, expires_delta: timedelta = None) -> str:
     return encoded_jwt
 
 
-def verify_token(token: str) -> str:
-    if not token:
-        response.handle_unauthorized_error(detail="No token provided.")
+def verify_access_token(req: Request, res: Response) -> str:
+    access_token = req.cookies.get("access_token")
+    if not access_token:
+        response.handle_unauthorized_error(detail="No access token provided.")
 
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
         if not email:
+            res.delete_cookie("access_token")
             response.handle_unauthorized_error(
                 detail="Unauthorized access. Email not found."
             )
     except Exception as e:
-        response.handle_unauthorized_error(exception=e)
+        res.delete_cookie("access_token")
+        response.handle_server_error(
+            detail_while="verifying access token",
+            code="TOKEN_VERIFY_ERROR",
+            exception=e,
+        )
 
     return email

@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from app.routers import auth
+from app.routers import auth, user
 
 
 @asynccontextmanager
@@ -40,3 +40,4 @@ async def custom_http_exception_handler(req: Request, exc: HTTPException):
 
 
 app.include_router(auth.router, prefix="/api")
+app.include_router(user.router, prefix="/api")
