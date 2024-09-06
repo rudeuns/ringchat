@@ -54,6 +54,13 @@ export default function ChatMessagePage() {
     setQuestion(value);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault(); 
+      handleSubmit(); 
+    }
+  };
+
   const handleSubmit = async () => {
     if (!roomId) return;
 
@@ -103,6 +110,7 @@ export default function ChatMessagePage() {
           maxRows={5}
           value={question}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
         />
         <SubmitChatButton onClick={handleSubmit}/>
       </div>
