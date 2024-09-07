@@ -68,16 +68,15 @@ def is_valid_url(url):
     Returns:
         Boolean: True or False
     """
-
-    if url.startswith("https://"):
-        if is_https_url(url) and can_parse_url(url):
-            return True
-    else:
-        # https://로 시작하도록 url 수정
+    
+    # https 프로토콜로 시작하지 않으면 https로 변환 
+    if not url.startswith("https://"):
         url = "https://" + url.lstrip("http://").rstrip("/")
-
-        if is_https_url(url) and can_parse_url(url):
-            return True
-
-        else:
-            return False
+    
+    # url이 https로 시작하고 파싱이 가능하면 유효한 url을 리턴 
+    final_url = can_parse_url(url)
+    if final_url and is_https_url(final_url): 
+        return final_url
+    else: 
+        return False 
+    

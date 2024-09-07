@@ -79,8 +79,10 @@ async def create_chatroom(
     # background_tasks.add_task(parse_and_save_urls, request.urls, db)
 
     # url 유효성 검사 후 파싱 진행
-    if all([is_valid_url(url) for url in request.urls]):
-        parse_and_save_urls(request.urls, new_chatroom.room_id, db)
+    is_valid_list = [is_valid_url(url) for url in request.urls]
+    
+    if all(is_valid_list):
+        parse_and_save_urls(is_valid_list, new_chatroom.room_id, db)
         return {"roomId": new_chatroom.room_id}
     else:
         print("Check urls. Contain an invalid url.")
