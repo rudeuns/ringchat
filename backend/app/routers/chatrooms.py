@@ -12,6 +12,7 @@ from app.database import get_db
 from app.models.tables import ChatRooms
 from app.models.tables import Link_Chatrooms
 from app.models.tables import Links
+from app.utils.url_processor import is_valid_url
 
 router = APIRouter()
 
@@ -77,9 +78,14 @@ async def create_chatroom(
     # TODO: URL 파싱 및 저장을 백그라운드 작업으로 추가
     # background_tasks.add_task(parse_and_save_urls, request.urls, db)
 
-    parse_and_save_urls(request.urls, new_chatroom.room_id, db)
-
-    return {"roomId": new_chatroom.room_id}
+    # url 유효성 검사 후 파싱 진행
+    is_valid_list = [is_valid_url(url) for url in request.urls]
+    
+    if all(is_valid_list):
+        parse_and_save_urls(is_valid_list, new_chatroom.room_id, db)
+        return {"roomId": new_chatroom.room_id}
+    else:
+        print("Check urls. Contain an invalid url.")
 
 
 def parse_and_save_urls(urls: List[str], room_id: int, db: Session):
