@@ -3,8 +3,8 @@ from typing import Union
 from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
-from langchain.document_loaders import AsyncHtmlLoader
-from langchain.document_transformers import BeautifulSoupTransformer
+from langchain_community.document_loaders import AsyncHtmlLoader
+from langchain_community.document_transformers import BeautifulSoupTransformer
 from langchain.schema import Document
 
 
@@ -119,39 +119,36 @@ def detect_site_type(url):
         return hostname[0]  # Return the first part (e.g., 'example')
 
 
-def document_parse(urls):
+def document_parse(url):
     """
     Parses documents from the given URLs based on their site types.
 
     Args:
-        urls (list[str]): A list of URLs to parse.
+        url (str): URL to parse.
 
     Returns:
-        list[Document]: A list of parsed documents.
+        : A list of parsed documents.
     """
+    
+    site_type = detect_site_type(url)  # Detect the site type
+    loader = AsyncHtmlLoader(url)  # Create an asynchronous HTML loader
+    docs = loader.load()  # Load the HTML documents
+    
+    if site_type == "tistory":
+        transform = BeautifulSoupSelectorTransformer(
+            selector='[class*="article"]', document_type="tistory"
+        )
+    elif site_type == "official":
+        transform = BeautifulSoupSelectorTransformer(
+            selector='[class*="article"]', document_type="official"
+        )
+    elif site_type == "stackoverflow":
+        transform = BeautifulSoupSelectorTransformer(
+            selector=".s-prose", document_type="stackoverflow"
+        )
+    else:
+        print("Unsupported site types")
 
-    for url in urls:
-        site_type = detect_site_type(url)  # Detect the site type
-
-        loader = AsyncHtmlLoader(url)  # Create an asynchronous HTML loader
-        docs = loader.load()  # Load the HTML documents
-
-        if site_type == "tistory":
-            transform = BeautifulSoupSelectorTransformer(
-                selector='[class*="article"]', document_type="tistory"
-            )
-        elif site_type == "official":
-            transform = BeautifulSoupSelectorTransformer(
-                selector='[class*="article"]', document_type="official"
-            )
-        elif site_type == "stackoverflow":
-            transform = BeautifulSoupSelectorTransformer(
-                selector=".s-prose", document_type="stackoverflow"
-            )
-        else:
-            continue  # Skip unsupported site types
-
-        documents = transform.transform_documents(
-            docs
-        )  # Transform the documents
-        return documents  # Return the parsed documents
+    documents = transform.transform_documents(docs)  # Transform the documents
+    
+    return documents[0] if documents else Document(page_content="", metadata={"url": url, "error": "No content parsed"})  # Return the parsed documents
