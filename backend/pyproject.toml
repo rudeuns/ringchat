@@ -21,6 +21,7 @@ black = "^24.8.0"
 flake8 = "^7.1.1"
 flake8-pyproject = "^1.2.3"
 flake8-mutable = "^1.2.0"
+beautifulsoup4 = "^4.12.3"
 
 [build-system]
 requires = ["poetry-core"]
