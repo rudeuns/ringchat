@@ -7,6 +7,10 @@ import SubmitChatButton from '@/components/buttons/SubmitChatButton';
 import { ChatMessageData } from "@/lib/interfaces";
 import { fetchClient } from "@/lib/fetch";
 import { usePathname } from "next/navigation";
+import ReactMarkdown from "react-markdown"; 
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'; 
+import { prismLight } from 'react-syntax-highlighter/dist/esm/styles/prism'; 
+
 
 export default function ChatMessagePage() {
   const [question, setQuestion] = useState('');
@@ -95,7 +99,24 @@ export default function ChatMessagePage() {
                 <Image src="/logo.svg" alt="LogoImage" width={40} height={40} />
               </div>
               <div className="chat-answer">
-                <p className="chat-msg-text">{msg.answer}</p>
+                <ReactMarkdown
+                  components={{
+                    code({ node, inline, className, children, ...props }) {
+                      const match = /language-(\w+)/.exec(className || ''); 
+                      return !inline && match ? (                        
+                        <SyntaxHighlighter style={prismLight} language={match[1]} PreTag="div" {...props}>
+                          {String(children).replace(/\n$/, '')}
+                        </SyntaxHighlighter>
+                      ) : (
+                        <code className={className} {...props}>
+                          {children}
+                        </code>
+                      );
+                    },
+                  }}
+                >
+                  {msg.answer}
+                </ReactMarkdown>
               </div>
             </div>
           </div>
