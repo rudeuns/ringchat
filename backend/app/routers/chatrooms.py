@@ -180,10 +180,10 @@ def _update_chatrooms_table(room_id, room_name, db: Session):
         db.commit()
         
 
-async def update_linkAndchatrooms_table(url, titile, content, room_id, room_name, db: Session): 
+async def update_linkAndchatrooms_table(url, title, content, room_id, room_name, db: Session): 
     try:
         with SessionLocal() as db: 
-            _update_link_table(url, titile, content, db) 
+            _update_link_table(url, title, content, db) 
             _update_chatrooms_table(room_id, room_name, db)
     except Exception as e: 
         logger.error(f"Failed to update link document for URL {url}: {e}", exc_info=True)
