@@ -173,10 +173,10 @@ docker compose up
 <a href="https://github.com/Rimember/ringchat/commits?author=teddygood" title="Code">🛠️</a> 
 </td>
 <td align="center">
-<a href="https://github.com/ronintlim">
-<img src="https://avatars.githubusercontent.com/u/44433964?v=4" width="100px;" alt=""/><br />
+<a href="https://github.com/NBHDQXT">
+<img src="https://avatars.githubusercontent.com/u/179193723?v=4" width="100px;" alt=""/><br />
 <sub><b>임승원</b></sub></a><br />
-<a href="https://github.com/Rimember/ringchat/commits?author=ronintlim" title="Code">🛠️</a> 
+<a href="https://github.com/Rimember/ringchat/commits?author=NBHDQXT" title="Code">🛠️</a> 
 </td>
 <td align="center">
 <a href="https://github.com/Jungjihyuk">
