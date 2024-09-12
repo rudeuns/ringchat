@@ -138,7 +138,7 @@ docker compose up
 <details open>
 <summary>Database ERD</summary>
 
-<img width="90%" src="https://github.com/user-attachments/assets/41f76240-a9ba-425b-997e-17b942394d3e">
+<img width="90%" src="https://github.com/user-attachments/assets/1e2e6740-4a9d-4dd9-a0a8-48095c027256">
 
 </details>
 
