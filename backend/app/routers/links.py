@@ -8,6 +8,8 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.tables import Links
 from app.models.tables import Vectors
+from app.utils.vector_operations import cosine_similarity
+from app.utils.vector_operations import embeddings
 
 router = APIRouter()
 
@@ -21,21 +23,16 @@ class Link(BaseModel):
 
 @router.get("/links", response_model=List[Link])
 async def search_links(query: str, db: Session = Depends(get_db)):
-    # query_vector = get_query_vector(query)
-
+    query_vector = embeddings.embed_query(query)
     vectors = db.query(Vectors).all()
 
-    threshold = 0.5
+    threshold = 0.3
     similarities = []
 
     for vector in vectors:
-        similarities.append((vector.link_id, threshold))
-
-    # for vector in vectors:
-    #     summary_vector = np.array(vector.summary_vector)
-    #     similarity = cosine_similarity(query_vector, summary_vector)
-    #     if similarity > threshold:
-    # similarities.append((vector.link_id, similarity))
+        similarity = cosine_similarity(query_vector, vector.summary_vector)
+        if similarity > threshold:
+            similarities.append((vector.link_id, similarity))
 
     top_similarities = sorted(similarities, key=lambda x: x[1], reverse=True)[
         :10
