@@ -17,44 +17,41 @@ from app.routers import chatrooms
 from app.routers import folders
 from app.routers import links
 from app.routers import messages
-from tests.example_data_insert import example_insert
+from app.utils.scheduler_config import start_scheduler, stop_scheduler
+# from tests.example_data_insert import example_insert
 
 
-def start():
-    Base.metadata.create_all(
-        bind=engine,
-        tables=[
-            Users.__table__,
-            Folders.__table__,
-            Links.__table__,
-            Vectors.__table__,
-            ChatRooms.__table__,
-            Link_Chatrooms.__table__,
-            Messages.__table__,
-            Scores.__table__,
-        ],
-    )  # 테이블 생성
+# def start():
+#     Base.metadata.create_all(
+#         bind=engine,
+#         tables=[
+#             Users.__table__,
+#             Folders.__table__,
+#             Links.__table__,
+#             Vectors.__table__,
+#             ChatRooms.__table__,
+#             Link_Chatrooms.__table__,
+#             Messages.__table__,
+#             Scores.__table__,
+#         ],
+#     )  # 테이블 생성
     # Base.metadata.drop_all(engine)
 
-    with SessionLocal() as db:
-        # 초기 데이터 삽입 (예시)
-        example_insert(db)
+    # with SessionLocal() as db:
+    #     # 초기 데이터 삽입 (예시)
+    #     example_insert(db)
 
-
-def shutdown():
-    print("service is stopped.")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # When service starts.
-
-    # start()
+    start_scheduler()
 
     yield
 
     # When service is stopped.
-    shutdown()
+    stop_scheduler()
 
 
 app = FastAPI(lifespan=lifespan)

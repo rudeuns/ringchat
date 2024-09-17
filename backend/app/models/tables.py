@@ -19,7 +19,7 @@ db_user = DB_USER.lower()
 
 
 class JsonType(TypeDecorator):
-    impl = VARCHAR2(4000)  # 적절한 VARCHAR2 크기 설정
+    impl = CLOB
     cache_ok = True  # 캐싱 활성화 (성능 향상)
 
     def process_bind_param(self, value, dialect):
