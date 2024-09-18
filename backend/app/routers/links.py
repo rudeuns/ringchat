@@ -16,6 +16,7 @@ router = APIRouter()
 
 class Link(BaseModel):
     url: str
+    link_title: str
     avgScore: float
     sumUsedNum: int
     sumBookmark: int
@@ -44,6 +45,7 @@ async def search_links(query: str, db: Session = Depends(get_db)):
     response = [
         Link(
             url=link.url,
+            link_title=link.link_title,
             avgScore=link.avg_score,
             sumUsedNum=link.sum_used_num,
             sumBookmark=link.sum_bookmark,

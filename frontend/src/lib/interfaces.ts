@@ -16,6 +16,7 @@ export interface ChatMessageData {
 
 export interface LinkData {
   url: string;
+  link_title: string;
   avgScore: number;
   sumUsedNum: number;
   sumBookmark: number;
