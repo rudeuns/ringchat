@@ -86,13 +86,18 @@ export default function ModalPage() {
                   onChange={() => handleCheckboxChange(link.url)}
                   className="link-checkbox"
                 />
-                <a href={link.url} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="flex"
-                >
-                  {link.url}
-                </a>
+                <div>
+                  <p className="flex">
+                    제목: {link.link_title}
+                  </p>
+                  <br></br>
+                  <a href={link.url} 
+                    target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="flex">
+                      URL: {link.url}
+                  </a>
+                </div>
                 <div className="link-score-container">
                   <div className="link-score-sub-container">
                     <p>별점: {link.avgScore}</p>  
