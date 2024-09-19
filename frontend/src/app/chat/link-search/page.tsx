@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { XMarkIcon } from "@/components/common/Icons";
 import InputField from "@/components/common/InputField";
@@ -15,6 +15,7 @@ export default function ModalPage() {
   const [links, setLinks] = useState<LinkData[]>([]);
   const [selectedLinks, setSelectedLinks] = useState<string[]>([]);
   const { inputLinks, addLink, limit } = useLink();
+  const [sortBy, setSortBy] = useState<string>('avgScore');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -51,6 +52,22 @@ export default function ModalPage() {
     router.back();
   };
 
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSortBy(e.target.value);
+    // 정렬 함수 호출
+    sortLinks(e.target.value);
+  };
+
+  const sortLinks = (sortBy: string) => {
+    const sortedLinks = [...links].sort((a, b) => {
+      if (sortBy === 'avgScore') return b.avgScore - a.avgScore;
+      if (sortBy === 'sumUsedNum') return b.sumUsedNum - a.sumUsedNum;
+      if (sortBy === 'sumBookmark') return b.sumBookmark - a.sumBookmark;
+      return 0;
+    });
+    setLinks(sortedLinks);
+  };
+
   return (
     <div className="modal-container">
       <div className="modal-sub-container">
@@ -71,10 +88,10 @@ export default function ModalPage() {
             <LinkSearchButton onClick={handleSubmit} />
           </div>
           <div className="select-container">
-            <select className="select">
-              <option value="">별점 높은 순</option>
-              <option value="option1">첨부 많은 순</option>
-              <option value="option2">저장 많은 순</option>
+            <select className="select" onChange={handleSortChange} value={sortBy}>
+              <option value="avgScore">별점 높은 순</option>
+              <option value="sumUsedNum">첨부 많은 순</option>
+              <option value="sumBookmark">저장 많은 순</option>
             </select>
           </div>
           <div className="link-list-container">
