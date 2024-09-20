@@ -31,6 +31,11 @@ class ChatMessage(BaseModel):
     answer: str
 
 
+class MessageHistory:
+    def __init__(self, messages: List[dict]):
+        self.messages = messages
+
+
 def format_messages_data(messages):
     messages_data = []
     for message in messages:
@@ -56,6 +61,14 @@ async def get_chat_messages(roomId: int, db: Session = Depends(get_db)):
 async def create_chat_answer(
     roomId: int, request: ChatMessageRequest, db: Session = Depends(get_db)
 ):
+    chat_history = (
+        db.query(Messages.question, Messages.answer, Messages.created_time).filter(Messages.room_id == roomId).order_by(Messages.created_time.asc()).all()
+    )
+    history = []
+    for question, answer, created_time in chat_history:
+        history.append({"role": "user", "content": question})
+        history.append({"role": "assistant", "content": answer})
+
     link_chatrooms = (
         db.query(Link_Chatrooms).filter(Link_Chatrooms.room_id == roomId).all()
     )
@@ -72,8 +85,10 @@ async def create_chat_answer(
                 Document(page_content=link.link_document, title=link.link_title)
             )
 
+    history_with_messages = MessageHistory(messages=history)
+
     answer = get_langchain_answer(
-        linked_documents, request.question, session_id=str(roomId)
+        linked_documents, request.question, session_id=str(roomId), history=history_with_messages
     )
     # answer = f"Answer to '{request.question}'"
 
