@@ -6,10 +6,8 @@ from langchain.chains import create_history_aware_retriever
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_community.vectorstores import Chroma
 from langchain_core.callbacks import StreamingStdOutCallbackHandler
-from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.documents import Document
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.prompts import MessagesPlaceholder
@@ -181,7 +179,6 @@ def get_conversation_chain(llm, vectorstore):
         "Based on the following context, answer the user's question. "
         "You are a world-class document writing expert. "
         "Feel free to ask anything. If you don't know the answer, just say you don't know. "
-        "Summarize in 3 lines."
         "\n\n"
         "{context}"
     )
@@ -202,25 +199,25 @@ def get_conversation_chain(llm, vectorstore):
     return rag_chain
 
 
-# TODO: Use databases to manage session history
-def get_session_history(session_id: str) -> BaseChatMessageHistory:
-    """
-    Use session_id to remember previous conversations.
-    Currently stored in a dict (memory).
+# Deletable..?
+#def get_session_history(session_id: str) -> BaseChatMessageHistory:
+#    """
+#    Use session_id to remember previous conversations.
+#    Currently stored in a dict (memory).
 
-    Args:
-        session_id (str): The session ID.
+#    Args:
+#        session_id (str): The session ID.
+#
+#    Returns:
+#        BaseChatMessageHistory: The chat message history for the session.
+#    """
+#    print(f"[session_id]: {session_id}")
+#    if session_id not in store:
+#        store[session_id] = ChatMessageHistory()
+#    return store[session_id]
 
-    Returns:
-        BaseChatMessageHistory: The chat message history for the session.
-    """
-    print(f"[session_id]: {session_id}")
-    if session_id not in store:
-        store[session_id] = ChatMessageHistory()
-    return store[session_id]
 
-
-def get_langchain_answer(docs: List[Document], question: str, session_id: str):
+def get_langchain_answer(docs: List[Document], question: str, session_id: str, history: List[dict]):
 
     model = "openai"
     chunks = get_text_chunks(docs)
@@ -239,10 +236,13 @@ def get_langchain_answer(docs: List[Document], question: str, session_id: str):
     llm = get_model(model)
     chain = get_conversation_chain(llm, vectorstore)
 
+    def get_session_history(session_id):
+        return history
+    
     if question:
         conversational_rag_chain = RunnableWithMessageHistory(
             chain,
-            get_session_history,
+            get_session_history = get_session_history,
             input_messages_key="input",
             history_messages_key="chat_history",
             output_messages_key="answer",
