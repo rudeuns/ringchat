@@ -1,3 +1,12 @@
+export class ErrorCode extends Error {
+  code: string | undefined;
+
+  constructor(message?: string | undefined, code?: string | undefined) {
+    super(message);
+    this.code = code;
+  }
+}
+
 export async function fetchClient(path: string, options: RequestInit = {}) {
   const url = `${process.env.NEXT_PUBLIC_API_URL}${path}`;
 

@@ -12,7 +12,7 @@
   }
 
   .scroll-base {
-    @apply flex flex-col flex-1 overflow-y-scroll;
+    @apply flex flex-col grow overflow-y-scroll;
   }
 
   .btn-base {
@@ -50,7 +50,7 @@
   }
 
   .container-sidebar {
-    @apply flex flex-col w-[16rem] bg-muted;
+    @apply flex flex-col shrink-0 w-[16rem] bg-muted;
   }
 
   .container-sidebar-top {
@@ -161,5 +161,9 @@
 
   .text-overflow {
     @apply whitespace-nowrap overflow-hidden;
+  }
+
+  code {
+    white-space: pre-wrap !important;
   }
 }

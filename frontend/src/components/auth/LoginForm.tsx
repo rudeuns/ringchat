@@ -24,7 +24,9 @@ export default function LoginForm() {
     setShowPassword((prevState) => !prevState);
   };
 
-  const handleSubmitForm = async () => {
+  const handleSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     if (!email) {
       alert("이메일을 입력해 주세요.");
       return;
@@ -60,7 +62,6 @@ export default function LoginForm() {
           break;
         default:
           alert("로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
-          console.log(`Error occurred while logging in: ${result.code}`);
           break;
       }
     } catch (error) {
@@ -72,7 +73,7 @@ export default function LoginForm() {
   };
 
   return (
-    <>
+    <form className="flex flex-col" onSubmit={handleSubmitForm}>
       <div className="flex flex-col">
         <input
           className="input-base"
@@ -103,9 +104,9 @@ export default function LoginForm() {
           </label>
         </div>
       </div>
-      <button className="btn-fill" onClick={handleSubmitForm}>
+      <button className="btn-fill sy-auth-input" type="submit">
         로그인
       </button>
-    </>
+    </form>
   );
 }

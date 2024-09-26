@@ -1,13 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { HiChevronUp, HiChevronDown } from "react-icons/hi2";
 import { fetchClient } from "@/lib/fetch";
 
 export default function TopBar({ email }: { email: string }) {
   const [showMenu, setShowMenu] = useState(false);
-  const router = useRouter();
 
   const handleToggleMenu = () => {
     setShowMenu(!showMenu);
@@ -20,8 +18,10 @@ export default function TopBar({ email }: { email: string }) {
       });
 
       if (res.ok) {
-        router.push("/");
+        window.location.href = "/";
         return;
+      } else {
+        alert("로그아웃 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
       }
     } catch (error) {
       alert(

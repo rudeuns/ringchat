@@ -32,7 +32,9 @@ export default function SignupForm() {
     setShowPassword((prevState) => !prevState);
   };
 
-  const handleSubmitForm = async () => {
+  const handleSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!email) {
@@ -76,10 +78,7 @@ export default function SignupForm() {
           window.location.reload();
           break;
         default:
-          alert(
-            "회원가입 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
-          );
-          console.log(`Error occurred while signing up: ${result.code}`);
+          alert("회원가입 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
           break;
       }
     } catch (error) {
@@ -91,7 +90,7 @@ export default function SignupForm() {
   };
 
   return (
-    <>
+    <form className="flex flex-col" onSubmit={handleSubmitForm}>
       <div className="flex flex-col">
         <input
           className="input-base"
@@ -132,9 +131,9 @@ export default function SignupForm() {
           </label>
         </div>
       </div>
-      <button className="btn-fill" onClick={handleSubmitForm}>
+      <button className="btn-fill sy-auth-input" type="submit">
         회원가입
       </button>
-    </>
+    </form>
   );
 }

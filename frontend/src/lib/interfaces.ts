@@ -1,14 +1,16 @@
 export interface FolderData {
   id: number;
   name: string;
-  chat_rooms: ChatRoomData[] | null;
+  created_at: string;
+  chat_rooms: ChatRoomData[];
 }
 
 export interface ChatRoomData {
   id: number;
-  folder_id: number | null;
   name: string;
   is_favorite: boolean;
+  created_at: string;
+  folder_id: number | null;
 }
 
 export interface LinkData {
