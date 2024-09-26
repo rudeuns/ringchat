@@ -33,3 +33,12 @@ async def get_db():
             yield session
         finally:
             await session.close()
+
+
+async def create_db_session():
+    session = Session()
+    return session
+
+
+async def close_db_session(session):
+    await session.close()

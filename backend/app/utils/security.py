@@ -1,9 +1,7 @@
 import jwt
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
-from fastapi import Request, Response
-from fastapi.security import OAuth2PasswordBearer
-import app.utils.response as response
+from fastapi import Request, Response, HTTPException
 import os
 from dotenv import load_dotenv
 
@@ -12,22 +10,13 @@ load_dotenv(".env.local")
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = float(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+COOKIE_EXPIRE_SECOND = int(os.getenv("COOKIE_EXPIRE_SECOND"))
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 def get_password_hash(password: str) -> str:
-    try:
-        hashed_password = pwd_context.hash(password)
-    except Exception as e:
-        response.handle_server_error(
-            detail_while="hashing password",
-            code="PWD_HASH_ERROR",
-            exception=e,
-        )
-
-    return hashed_password
+    return pwd_context.hash(password)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -35,47 +24,45 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 
 def create_access_token(data: dict, expires_delta: timedelta = None) -> str:
-    try:
-        if expires_delta:
-            expire = datetime.now(timezone.utc) + expires_delta
-        else:
-            expire = datetime.now(timezone.utc) + timedelta(
-                minutes=ACCESS_TOKEN_EXPIRE_MINUTES
-            )
-
-        to_encode = data.copy()
-        to_encode.update({"exp": expire})
-
-        encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    except Exception as e:
-        response.handle_server_error(
-            detail="creating access token",
-            code="TOKEN_CREATE_ERROR",
-            exception=e,
+    if expires_delta:
+        expire = datetime.now(timezone.utc) + expires_delta
+    else:
+        expire = datetime.now(timezone.utc) + timedelta(
+            minutes=ACCESS_TOKEN_EXPIRE_MINUTES
         )
 
+    to_encode = data.copy()
+    to_encode.update({"exp": expire})
+
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
 
-def verify_access_token(req: Request, res: Response) -> str:
-    access_token = req.cookies.get("access_token")
-    if not access_token:
-        response.handle_unauthorized_error(detail="No access token provided.")
+def set_access_token_cookie(res: Response, access_token: str):
+    res.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        max_age=COOKIE_EXPIRE_SECOND,
+    )
 
+
+def get_current_user_id(req: Request) -> int:
     try:
-        payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
-        email: str = payload.get("sub")
-        if not email:
-            res.delete_cookie("access_token")
-            response.handle_unauthorized_error(
-                detail="Unauthorized access. Email not found."
+        access_token = req.cookies.get("access_token")
+        if not access_token:
+            raise HTTPException(
+                status_code=401,
+                detail="No access token provided.",
+                headers={"X-Error": "UNAUTHORIZED"},
             )
-    except Exception as e:
-        res.delete_cookie("access_token")
-        response.handle_server_error(
-            detail_while="verifying access token",
-            code="TOKEN_VERIFY_ERROR",
-            exception=e,
-        )
 
-    return email
+        payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id: str = payload.get("sub")
+        return int(user_id)
+    except Exception as e:
+        raise HTTPException(
+            status_code=401,
+            detail="Unauthorized access.",
+            headers={"X-Error": "UNAUTHORIZED"},
+        ) from e

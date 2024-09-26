@@ -3,7 +3,7 @@ poetry.lock
 
 # local env files
 .env
-.env.*
+.env.local
 
 # DB
 chroma_db
@@ -25,3 +25,9 @@ __pycache__/
 # alembic
 alembic/
 alembic.ini
+
+# logging
+*.log
+
+# security
+*.pem

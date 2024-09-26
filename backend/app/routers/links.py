@@ -1,56 +1,99 @@
-from typing import List
+from fastapi import APIRouter, Depends, HTTPException, Query, BackgroundTasks
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.db.database import get_db, create_db_session
+from app.schemas import (
+    LinkParse,
+    LinkCreate,
+    LinkListResponse,
+    LinkIdListResponse,
+)
+import app.db.crud as crud
+from app.llm.embedding import generate_embedding
+from app.utils.parser import parse_single_url
+from app.llm.link_task import summarize_and_embed_link
+import asyncio
 
-from fastapi import APIRouter
-from fastapi import Depends
-from pydantic import BaseModel
-from sqlalchemy.orm import Session
-
-from app.database import get_db
-from app.models.tables import Links
-from app.models.tables import Vectors
-from app.utils.vector_operations import cosine_similarity
-from app.utils.vector_operations import embeddings
-
-router = APIRouter()
-
-
-class Link(BaseModel):
-    url: str
-    link_title: str
-    avgScore: float
-    sumUsedNum: int
-    sumBookmark: int
+router = APIRouter(tags=["links"])
 
 
-@router.get("/links", response_model=List[Link])
-async def search_links(query: str, db: Session = Depends(get_db)):
-    query_vector = embeddings.embed_query(query)
-    vectors = db.query(Vectors).all()
+@router.get("/links", response_model=LinkListResponse)
+async def get_links(
+    query: str = Query(),
+    db: AsyncSession = Depends(get_db),
+):
+    try:
+        query_vector = generate_embedding(text=query, model_type="openai")
 
-    threshold = 0.3
-    similarities = []
+        links = await crud.get_links_by_query(db=db, query_vector=query_vector)
 
-    for vector in vectors:
-        similarity = cosine_similarity(query_vector, vector.summary_vector)
-        if similarity > threshold:
-            similarities.append((vector.link_id, similarity))
+        return LinkListResponse(links=links)
 
-    top_similarities = sorted(similarities, key=lambda x: x[1], reverse=True)[
-        :10
-    ]
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail="Unexpected error occurred while fetching links.",
+            headers={"X-Error": "SERVER_ERROR"},
+        ) from e
 
-    top_link_ids = [item[0] for item in top_similarities]
-    top_links = db.query(Links).filter(Links.link_id.in_(top_link_ids)).all()
 
-    response = [
-        Link(
-            url=link.url,
-            link_title=link.link_title,
-            avgScore=link.avg_score,
-            sumUsedNum=link.sum_used_num,
-            sumBookmark=link.sum_bookmark,
+@router.post("/links", response_model=LinkIdListResponse)
+async def create_links(
+    link_data: LinkParse,
+    background_tasks: BackgroundTasks,
+    db: AsyncSession = Depends(get_db),
+):
+    try:
+        urls = [url for url in link_data.urls if url.strip()]
+
+        existing_links = await crud.get_existing_links_by_url(db=db, urls=urls)
+        existing_urls = [link.url for link in existing_links]
+        existing_link_ids = [link.id for link in existing_links]
+
+        new_link_ids = []
+        new_urls = [url for url in urls if url not in existing_urls]
+        if new_urls:
+            new_links = await asyncio.gather(
+                *(parse_and_create_link(url=url) for url in new_urls)
+            )
+            new_link_ids = [link.id for link in new_links]
+
+            for link_id in new_link_ids:
+                background_tasks.add_task(summarize_and_embed_link, link_id)
+
+        return LinkIdListResponse(link_ids=existing_link_ids + new_link_ids)
+
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail="Unexpected error occurred while parsing and creating link.",
+            headers={"X-Error": "SERVER_ERROR"},
+        ) from e
+
+
+async def parse_and_create_link(url: str):
+    documents = parse_single_url(url)
+
+    if not documents or len(documents) == 0:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No content could be extracted from the URL: {url}",
+            headers={"X-Error": "PARSING_ERROR"},
         )
-        for link in top_links
-    ]
 
-    return response
+    document = documents[0]
+    title = document.metadata.get("title", "No Title")
+    content = document.page_content
+
+    db = await create_db_session()
+
+    new_link = await crud.create_link(
+        db=db, link_data=LinkCreate(url=url, title=title, content=content)
+    )
+
+    await db.close()
+
+    return new_link

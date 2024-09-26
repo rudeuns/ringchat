@@ -1,17 +1,9 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.database import get_db
+from app.schemas import UserCreate, UserLogin, UserResponse
 import app.db.crud as crud
-import app.schemas as schemas
 import app.utils.security as security
-import app.utils.response as response
-import os
-from dotenv import load_dotenv
-
-
-load_dotenv(".env.local")
-
-COOKIE_EXPIRE_SECOND = os.getenv("COOKIE_EXPIRE_SECOND")
 
 router = APIRouter(
     prefix="/auth",
@@ -19,80 +11,99 @@ router = APIRouter(
 )
 
 
-@router.post("/signup")
-async def signup_for_access_token(
-    user_info_data: schemas.UserInfoCreate, db: AsyncSession = Depends(get_db)
+@router.post("/signup", response_model=UserResponse)
+async def signup(
+    user_data: UserCreate, res: Response, db: AsyncSession = Depends(get_db)
 ):
-    # 이메일 중복 확인
-    user_info = await crud.get_user_info_by_email(
-        db=db, email=user_info_data.email
-    )
-    if user_info:
-        response.handle_bad_request(
-            detail="Email already registered.", code="EMAIL_EXISTS"
+    ERROR_CODE = None
+
+    try:
+        # 이메일 중복 확인
+        user = await crud.get_user_by_email(db=db, email=user_data.email)
+        if user:
+            raise HTTPException(
+                status_code=400,
+                detail="Email already registered.",
+                headers={"X-Error": "EMAIL_EXISTS"},
+            )
+
+        # 비밀번호 해싱
+        hashed_password = security.get_password_hash(user_data.password)
+        user_data.password = hashed_password
+
+        # 새로운 사용자 추가
+        new_user = await crud.create_user(db=db, user_data=user_data)
+
+        # JWT 토큰 발급
+        ERROR_CODE = "TOKEN_CREATE_ERROR"
+        access_token = security.create_access_token(
+            data={"sub": str(new_user.id)}
         )
+        security.set_access_token_cookie(res=res, access_token=access_token)
 
-    # 비밀번호 해싱
-    hashed_password = security.get_password_hash(
-        password=user_info_data.password
-    )
-    user_info_data.password = hashed_password
-
-    # 새로운 사용자 정보 추가
-    new_user_info = await crud.create_user_info(
-        db=db, user_info_data=user_info_data
-    )
-
-    # JWT 토큰 발급
-    access_token = security.create_access_token(
-        data={"sub": new_user_info.email}
-    )
-
-    res = response.handle_success(detail="Signup and login successful.")
-    res.set_cookie(
-        key="access_token",
-        value=access_token,
-        httponly=True,
-        max_age=int(COOKIE_EXPIRE_SECOND),
-    )
-    return res
+        return UserResponse(id=new_user.id, email=new_user.email)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail="Unexpected error occurred while signing up.",
+            headers={"X-Error": ERROR_CODE or "SERVER_ERROR"},
+        ) from e
 
 
-@router.post("/login")
-async def login_for_access_token(
-    login_data: schemas.UserInfoLogin, db: AsyncSession = Depends(get_db)
+@router.post("/login", response_model=UserResponse)
+async def login(
+    login_data: UserLogin,
+    res: Response,
+    db: AsyncSession = Depends(get_db),
 ):
-    # 사용자 정보 조회
-    user_info = await crud.get_user_info_by_email(db=db, email=login_data.email)
-    if not user_info:
-        response.handle_bad_request(
-            detail="Incorrect email.", code="INVALID_EMAIL"
-        )
+    try:
+        # 사용자 정보 조회
+        user = await crud.get_user_by_email(db=db, email=login_data.email)
+        if not user:
+            raise HTTPException(
+                status_code=400,
+                detail="Incorrect email.",
+                headers={"X-Error": "INVALID_EMAIL"},
+            )
 
-    # 비밀번호 확인
-    if not security.verify_password(
-        plain_password=login_data.password, hashed_password=user_info.password
-    ):
-        response.handle_bad_request(
-            detail="Incorrect password.", code="INVALID_PWD"
-        )
+        # 비밀번호 확인
+        if not security.verify_password(
+            plain_password=login_data.password, hashed_password=user.password
+        ):
+            raise HTTPException(
+                status_code=400,
+                detail="Incorrect password.",
+                headers={"X-Error": "INVALID_PWD"},
+            )
 
-    # JWT 토큰 발급
-    access_token = security.create_access_token(data={"sub": user_info.email})
+        # JWT 토큰 발급
+        access_token = security.create_access_token(data={"sub": str(user.id)})
+        security.set_access_token_cookie(res=res, access_token=access_token)
 
-    res = response.handle_success(detail="Login successful.")
-    res.set_cookie(
-        key="access_token",
-        value=access_token,
-        httponly=True,
-        max_age=int(COOKIE_EXPIRE_SECOND),
-    )
-    return res
+        return UserResponse(id=user.id, email=user.email)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail="Unexpected error occurred while logging in.",
+            headers={"X-Error": "SERVER_ERROR"},
+        ) from e
 
 
 @router.post("/logout")
-async def logout():
-    # 쿠키에서 토큰 삭제
-    res = response.handle_success(detail="Logout successful.")
-    res.delete_cookie(key="access_token")
-    return res
+async def logout(res: Response):
+    try:
+        # 토큰 삭제
+        res.delete_cookie(key="access_token")
+        return {"detail": "Logout successful."}
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail="Unexpected error occurred while logging out.",
+            headers={"X-Error": "SERVER_ERROR"},
+        ) from e
