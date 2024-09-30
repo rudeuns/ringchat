@@ -15,7 +15,7 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-from app.tasks.message_task import store
+from app.llm.message_task import store
 
 
 def get_rag_chain(document_text: str):

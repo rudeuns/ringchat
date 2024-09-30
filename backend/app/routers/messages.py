@@ -10,8 +10,8 @@ from app.schemas import (
 )
 import app.db.crud as crud
 from app.utils.security import get_current_user_id
-from app.utils.langchain import get_langchain_response
-from app.tasks.message_task import restore_link_content_and_chat_history
+from app.llm.langchain import get_langchain_response
+from app.llm.message_task import restore_link_content_and_chat_history
 from typing import Optional
 import asyncio
 

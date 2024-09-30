@@ -8,9 +8,9 @@ from app.schemas import (
     LinkIdListResponse,
 )
 import app.db.crud as crud
-from app.utils.embedding import generate_embedding
+from app.llm.embedding import generate_embedding
 from app.utils.parser import parse_single_url
-from app.tasks.link_task import summarize_and_embed_link
+from app.llm.link_task import summarize_and_embed_link
 import asyncio
 
 router = APIRouter(tags=["links"])
