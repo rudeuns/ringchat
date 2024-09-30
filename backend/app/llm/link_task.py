@@ -1,8 +1,8 @@
 from app.db.database import create_db_session
 import app.db.crud as crud
 from app.schemas import LinkSummaryEmbeddingCreate
-from app.utils.langchain import summarize_content
-from app.utils.embedding import generate_embedding
+from app.llm.langchain import summarize_content
+from app.llm.embedding import generate_embedding
 
 
 async def summarize_and_embed_link(link_id: int):
