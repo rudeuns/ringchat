@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "app"
+name = "ringchat"
 version = "0.1.0"
 description = ""
 authors = ["Your Name <you@example.com>"]
@@ -16,6 +16,15 @@ python-dotenv = "^1.0.1"
 oracledb = "^2.3.0"
 chromadb = "^0.5.5"
 langchain-huggingface = "^0.0.3"
+beautifulsoup4 = "^4.12.3"
+pgvector = "^0.3.2"
+psycopg2-binary = "^2.9.9"
+alembic = "^1.13.2"
+asyncpg = "^0.29.0"
+greenlet = "^3.0.3"
+pyjwt = "^2.9.0"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+bcrypt = "==4.0.1"
 isort = "^5.13.2"
 black = "^24.8.0"
 flake8 = "^7.1.1"

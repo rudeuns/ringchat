@@ -1,94 +1,115 @@
-from datetime import datetime
-from datetime import timedelta
-from typing import List
+from fastapi import APIRouter, Depends, HTTPException, Query, BackgroundTasks
+from fastapi.responses import StreamingResponse
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.db.database import get_db
+from app.schemas import (
+    MessageCreate,
+    MessageStream,
+    MessageResponse,
+    MessageListResponse,
+)
+import app.db.crud as crud
+from app.utils.security import get_current_user_id
+from app.llm.langchain import get_langchain_response
+from app.llm.message_task import restore_link_content_and_chat_history
+from typing import Optional
+import asyncio
 
-from fastapi import APIRouter
-from fastapi import Depends
-from fastapi import HTTPException
-from langchain_core.documents import Document
-from pydantic import BaseModel
-from sqlalchemy.orm import Session
-
-from app.database import get_db
-from app.models.tables import Link_Chatrooms
-from app.models.tables import Links
-from app.models.tables import Messages
-from app.utils.get_langchain_answer import get_langchain_answer
-
-router = APIRouter()
-
-
-class ChatMessageRequest(BaseModel):
-    question: str
+router = APIRouter(tags=["messages"])
 
 
-class ChatMessageResponse(BaseModel):
-    answer: str
-
-
-class ChatMessage(BaseModel):
-    question: str
-    answer: str
-
-
-def format_messages_data(messages):
-    messages_data = []
-    for message in messages:
-        messages_data.append(
-            {"question": message.question, "answer": message.answer}
-        )
-
-    return messages_data
-
-
-@router.get("/chatrooms/{roomId}/messages", response_model=List[ChatMessage])
-async def get_chat_messages(roomId: int, db: Session = Depends(get_db)):
-    messages = db.query(Messages).filter(Messages.room_id == roomId).all()
-    if not messages:
-        raise HTTPException(
-            status_code=404, detail="Room not found or no messages available"
-        )
-
-    return messages
-
-
-@router.post("/chatrooms/{roomId}/messages", response_model=ChatMessageResponse)
-async def create_chat_answer(
-    roomId: int, request: ChatMessageRequest, db: Session = Depends(get_db)
+@router.get(
+    "/chatrooms/{chat_room_id}/messages", response_model=MessageListResponse
+)
+async def get_messages(
+    chat_room_id: int,
+    background_tasks: BackgroundTasks,
+    restore: Optional[bool] = Query(None),
+    _=Depends(get_current_user_id),
+    db: AsyncSession = Depends(get_db),
 ):
-    link_chatrooms = (
-        db.query(Link_Chatrooms).filter(Link_Chatrooms.room_id == roomId).all()
-    )
-
-    linked_documents = []
-    for link_chatroom in link_chatrooms:
-        link = (
-            db.query(Links)
-            .filter(Links.link_id == link_chatroom.link_id)
-            .first()
+    try:
+        messages = await crud.get_messages_by_chat_room_id(
+            db=db, chat_room_id=chat_room_id
         )
-        if link and link.link_document:
-            linked_documents.append(
-                Document(page_content=link.link_document, title=link.link_title)
+
+        if restore:
+            background_tasks.add_task(
+                restore_link_content_and_chat_history, chat_room_id
             )
 
-    answer = get_langchain_answer(
-        linked_documents, request.question, session_id=str(roomId)
-    )
-    # answer = f"Answer to '{request.question}'"
+        return MessageListResponse(messages=messages)
 
-    now_utc = datetime.now()
-    kst_offset = timedelta(hours=9)
-    now_kst = now_utc + kst_offset
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail="Unexpected error occurred while fetching messages.",
+            headers={"X-Error": "SERVER_ERROR"},
+        ) from e
 
-    new_message = Messages(
-        room_id=roomId,
-        question=request.question,
-        answer=answer,
-        created_time=now_kst,
-    )
-    db.add(new_message)
-    db.commit()
-    db.refresh(new_message)
 
-    return ChatMessageResponse(answer=answer)
+@router.post(
+    "/chatrooms/{chat_room_id}/messages", response_model=MessageResponse
+)
+async def create_message(
+    chat_room_id: int,
+    message_data: MessageCreate,
+    _=Depends(get_current_user_id),
+    db: AsyncSession = Depends(get_db),
+):
+    try:
+        new_message = await crud.create_message(
+            db=db, message_data=message_data, chat_room_id=chat_room_id
+        )
+
+        return MessageResponse(
+            id=new_message.id,
+            content=new_message.content,
+            is_user_message=new_message.is_user_message,
+            created_at=new_message.created_at,
+        )
+
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail="Unexpected error occurred while creating message.",
+            headers={"X-Error": "SERVER_ERROR"},
+        ) from e
+
+
+@router.post("/chatrooms/{chat_room_id}/messages/stream")
+async def stream_message(chat_room_id: int, message_data: MessageStream):
+    try:
+
+        async def generate_ai_message():
+            try:
+                user_message = message_data.user_message
+
+                for chunk in get_langchain_response(user_message, chat_room_id):
+                    yield chunk
+                    await asyncio.sleep(0.01)
+
+            except Exception as e:
+                raise HTTPException(
+                    status_code=500,
+                    detail="Unexpected error occurred while generating ai message.",
+                    headers={"X-Error": "SERVER_ERROR"},
+                ) from e
+
+        return StreamingResponse(
+            generate_ai_message(),
+            media_type="text/event-stream",
+        )
+
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail="Unexpected error occurred while streaming message.",
+            headers={"X-Error": "SERVER_ERROR"},
+        ) from e

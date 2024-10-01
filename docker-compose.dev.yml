@@ -1,19 +1,32 @@
 services:
+  db:
+    image: pgvector/pgvector:pg16
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+    env_file:
+      - ./backend/.env.local
+
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     volumes:
       - ./backend:/workdir/backend
     ports:
       - "8000:8000"
     networks:
       - app-network
+    depends_on:
+      - db
 
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     volumes:
       - ./frontend:/workdir/frontend
     ports:
@@ -26,3 +39,6 @@ services:
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  pgdata:

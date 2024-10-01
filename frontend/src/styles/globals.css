@@ -3,117 +3,167 @@
 @tailwind utilities;
 
 @layer base {
+  body {
+    @apply text-black bg-white whitespace-pre-wrap select-none;
+  }
+
   main {
-    @apply h-screen w-screen bg-white text-black;
+    @apply w-screen h-screen;
   }
 
-  .full-container {
-    @apply flex flex-row h-full;
+  .scroll-base {
+    @apply flex flex-col grow overflow-y-scroll;
   }
 
-  .sidebar-container {
-    @apply flex flex-col h-full w-1/5 bg-primary-light;
+  .btn-base {
+    @apply flex-center shrink-0 px-6 py-2 border-2 border-transparent rounded-xl;
   }
 
-  .main-container {
-    @apply flex flex-col mx-10 h-full w-full;
+  .btn-stroke {
+    @apply btn-base text-primary-fill-hover border-muted;
   }
 
-  .logo-small {
-    @apply text-xl font-semibold text-primary-dark;
+  .btn-fill {
+    @apply btn-base text-white-fill-hover border-primary;
   }
 
-  .logo-large {
-    @apply text-5xl font-extrabold text-primary;
+  .input-base {
+    @apply px-4 py-2 border-muted-xl shadow-sm appearance-none focus:outline-none focus:border-primary-light;
   }
 
-  .btn-container {
-    @apply flex place-content-center;
+  .icon-base {
+    @apply size-5 shrink-0 hover:cursor-pointer;
   }
 
-  .btn {
-    @apply flex px-4 py-2 bg-primary rounded-xl;
+  .icon-inside {
+    @apply absolute right-2 top-1/2 -translate-y-1/2;
   }
 
-  .btn-text {
-    @apply text-lg text-white;
-  }
-
-  .input-field {
-    @apply p-2 flex-grow text-lg border-2 border-primary rounded-xl appearance-none focus:outline-none focus:shadow-md;
+  .li-menu-base {
+    @apply flex-center p-2 hover:cursor-pointer;
   }
 }
 
 @layer components {
-  .topbar {
-    @apply flex flex-row justify-end space-x-2 p-2;
+  .container-main {
+    @apply scroll-base space-y-12 p-12;
   }
 
-  .chat-main-scroll {
-    @apply flex-1 overflow-scroll;
+  .container-sidebar {
+    @apply flex flex-col shrink-0 w-[16rem] bg-muted;
   }
 
-  .chat-main-container {
-    @apply flex flex-col;
+  .container-sidebar-top {
+    @apply flex flex-row items-center space-x-4 px-4 py-5 text-primary;
   }
 
-  .logo-desc {
-    @apply flex flex-col space-y-10 my-20;
+  .container-folder {
+    @apply flex-row flex-between-center space-x-1 px-2 py-1 font-medium text-primary bg-white bg-opacity-50 shadow-sm;
   }
 
-  .login-nav {
-    @apply flex flex-row place-content-center space-x-20 my-10
+  .container-chatroom {
+    @apply flex-row flex-between-center space-x-1 mx-2 my-1 rounded-xl;
   }
 
-  .chat-main-sub-container {
-    @apply flex flex-col mx-40
+  .container-sidebar-name {
+    @apply flex-row flex-left-center grow space-x-2 p-2 overflow-hidden hover:cursor-pointer;
   }
 
-  .link-input-container {
-    @apply flex flex-col space-y-2 my-10 p-8 pt-4 border-2 border-primary-light rounded-xl;
+  .container-check-visible {
+    @apply flex-row flex-left-center space-x-1 p-2;
   }
 
-  .link-search-nav {
-    @apply flex flex-row justify-between;
+  .container-menu {
+    @apply flex flex-col w-[10rem] bg-white divide-y divide-muted border-muted-lg shadow-lg overflow-hidden z-10;
   }
 
-  .link-input-notice {
-    @apply flex justify-end;
+  .container-select-option {
+    @apply flex-row flex-left-center;
   }
 
-  .chat-msg-container {
-    @apply flex flex-col space-y-6 mt-2 p-4 flex-1 overflow-scroll;
+  .container-stat {
+    @apply flex-row flex-left-center space-x-1 w-[4rem];
   }
 
-  .chat-msg-sub-container {
-    @apply flex flex-col space-y-4
+  .btn-auth-active {
+    @apply btn-base grow font-medium text-primary border-0 rounded-none;
   }
 
-  .chat-input-container {
-    @apply flex flex-row space-x-4 m-10 mt-5;
+  .btn-auth-inactive {
+    @apply btn-base grow text-gray border-0 rounded-none hover:font-medium hover:text-primary;
   }
 
-  .chat-question-container {
-    @apply flex flex-row justify-end ms-80;
+  .li-menu-default {
+    @apply li-menu-base text-primary-fill-hover;
+  }
+}
+
+@layer utilities {
+  .h-topbar {
+    @apply h-12;
   }
 
-  .chat-question {
-    @apply px-4 py-2 h-auto w-auto bg-primary-light rounded-full;
+  .sy-auth-input {
+    @apply mt-5;
   }
 
-  .chat-answer-container {
-    @apply flex flex-row justify-start me-20
+  .ms-select-option {
+    @apply ms-2;
   }
 
-  .chat-answer {
-    @apply px-4 py-2 h-auto w-auto
+  .flex-center {
+    @apply flex justify-center items-center;
   }
 
-  .chat-answer-logo {
-    @apply flex flex-col
+  .flex-left-center {
+    @apply flex justify-start items-center;
   }
 
-  .chat-msg-text {
-    @apply whitespace-pre-line break-all;
+  .flex-right-center {
+    @apply flex justify-end items-center;
+  }
+
+  .flex-between-center {
+    @apply flex justify-between items-center;
+  }
+
+  .text-primary-fill-hover {
+    @apply text-primary hover:text-white hover:bg-primary;
+  }
+
+  .text-white-fill-hover {
+    @apply text-white bg-primary hover:bg-primary-dark;
+  }
+
+  .text-red-fill-hover {
+    @apply text-red bg-white hover:text-white hover:bg-red;
+  }
+
+  .text-primary-hover {
+    @apply text-primary hover:text-primary-dark;
+  }
+
+  .text-gray-hover {
+    @apply text-gray hover:text-primary;
+  }
+
+  .text-gray-hover-red {
+    @apply text-gray hover:text-red;
+  }
+
+  .border-muted-lg {
+    @apply border-2 border-muted rounded-lg;
+  }
+
+  .border-muted-xl {
+    @apply border-2 border-muted rounded-xl;
+  }
+
+  .text-overflow {
+    @apply whitespace-nowrap overflow-hidden;
+  }
+
+  code {
+    white-space: pre-wrap !important;
   }
 }
