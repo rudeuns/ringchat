@@ -26,20 +26,10 @@
  Features
 </summary> <br />
 
-<p align="center">
-    <img width="49%" src="https://github.com/user-attachments/assets/73b16abf-ba93-40f3-b5ae-0d8321704b1b" alt="login"/>
-&nbsp;
-    <img width="49%" src="https://github.com/user-attachments/assets/4a1cbfb3-b1a6-44e3-a1d8-685f4376d855" alt="chatroom"/>
-</p>
-
-<p align="center">
-    <img width="49%" src="https://github.com/user-attachments/assets/a15d8cde-3a50-479f-bea7-32406d3cb4e1" alt="link"/>
-&nbsp;
-    <img width="49%" src="https://github.com/user-attachments/assets/f1d86218-aad6-4f92-9d74-7819a17867d0" alt="message"/>
-</p>
-
+https://github.com/user-attachments/assets/5250cb1d-e67f-437b-a257-59d5d73709c2
 
 </details>
+
 
 ## <div align="center">Service architecture</div>
 
@@ -138,7 +128,7 @@ docker compose up
 <details open>
 <summary>Database ERD</summary>
 
-<img width="90%" src="https://github.com/user-attachments/assets/1e2e6740-4a9d-4dd9-a0a8-48095c027256">
+<img width="90%" src="https://github.com/user-attachments/assets/89ca3194-d554-4e2f-aa35-54090c87bb98">
 
 </details>
 
