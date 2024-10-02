@@ -140,4 +140,5 @@ export default function LinkPage() {
       </div>
     </div>
   );
+
 }

@@ -72,4 +72,5 @@ def parse_single_url(url: str) -> Union[list[Document], None]:
         transformer = BeautifulSoupSelectorTransformer(selector=None)
 
     transformed_documents = transformer.transform_documents(docs)
+
     return transformed_documents

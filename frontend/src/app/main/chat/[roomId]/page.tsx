@@ -149,4 +149,5 @@ export default function ChatPage() {
       <MessageInput onSendMessage={handleSendMessage} />
     </>
   );
+
 }

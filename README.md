@@ -138,7 +138,7 @@ docker compose up
 <details open>
 <summary>Database ERD</summary>
 
-<img width="90%" src="https://github.com/user-attachments/assets/41f76240-a9ba-425b-997e-17b942394d3e">
+<img width="90%" src="https://github.com/user-attachments/assets/1e2e6740-4a9d-4dd9-a0a8-48095c027256">
 
 </details>
 
@@ -169,10 +169,10 @@ Thanks goes to these wonderful people
 <a href="https://github.com/Rimember/ringchat/commits?author=teddygood" title="Code">🛠️</a> 
 </td>
 <td align="center">
-<a href="https://github.com/ronintlim">
-<img src="https://avatars.githubusercontent.com/u/44433964?v=4" width="100px;" alt=""/><br />
+<a href="https://github.com/NBHDQXT">
+<img src="https://avatars.githubusercontent.com/u/179193723?v=4" width="100px;" alt=""/><br />
 <sub><b>임승원</b></sub></a><br />
-<a href="https://github.com/Rimember/ringchat/commits?author=ronintlim" title="Code">🛠️</a> 
+<a href="https://github.com/Rimember/ringchat/commits?author=NBHDQXT" title="Code">🛠️</a> 
 </td>
 <td align="center">
 <a href="https://github.com/Jungjihyuk">
