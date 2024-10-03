@@ -1,68 +1,53 @@
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-
-from fastapi import FastAPI
-
-from app.database import Base
-from app.database import engine
-from app.database import SessionLocal
-from app.models.tables import ChatRooms
-from app.models.tables import Folders
-from app.models.tables import Link_Chatrooms
-from app.models.tables import Links
-from app.models.tables import Messages
-from app.models.tables import Scores
-from app.models.tables import Users
-from app.models.tables import Vectors
-from app.routers import chatrooms
-from app.routers import folders
-from app.routers import links
-from app.routers import messages
-from app.utils.scheduler_config import start_scheduler, stop_scheduler
-# from tests.example_data_insert import example_insert
-
-
-# def start():
-#     Base.metadata.create_all(
-#         bind=engine,
-#         tables=[
-#             Users.__table__,
-#             Folders.__table__,
-#             Links.__table__,
-#             Vectors.__table__,
-#             ChatRooms.__table__,
-#             Link_Chatrooms.__table__,
-#             Messages.__table__,
-#             Scores.__table__,
-#         ],
-#     )  # 테이블 생성
-    # Base.metadata.drop_all(engine)
-
-    # with SessionLocal() as db:
-    #     # 초기 데이터 삽입 (예시)
-    #     example_insert(db)
-
+from app.db.database import init_db
+from app.utils.logging import log_exception
+from app.routers import auth, me, folders, chatrooms, messages, links, rating
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # When service starts.
-    start_scheduler()
-
+    print("Service is starting.")
+    # init_db()
     yield
-
-    # When service is stopped.
-    stop_scheduler()
+    print("Service is stopped.")
 
 
 app = FastAPI(lifespan=lifespan)
 
-
-app.include_router(folders.router, prefix="/api/v0")
-app.include_router(chatrooms.router, prefix="/api/v0")
-app.include_router(messages.router, prefix="/api/v0")
-app.include_router(links.router, prefix="/api/v0")
+origins = [
+    "http://localhost:3000",
+]
 
 
-# if __name__ == "__main__":
-#     import uvicorn
-#     uvicorn.run(app, host="0.0.0.0", port=8000)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.exception_handler(HTTPException)
+async def custom_http_exception_handler(req: Request, exc: HTTPException):
+    log_exception(exception=exc)
+
+    content = {"detail": exc.detail}
+    if exc.headers and "X-Error" in exc.headers:
+        content["code"] = exc.headers["X-Error"]
+
+    return JSONResponse(status_code=exc.status_code, content=content)
+
+
+prefix = "/api"
+
+app.include_router(auth.router, prefix=prefix)
+app.include_router(me.router, prefix=prefix)
+app.include_router(folders.router, prefix=prefix)
+app.include_router(chatrooms.router, prefix=prefix)
+app.include_router(messages.router, prefix=prefix)
+app.include_router(links.router, prefix=prefix)
+app.include_router(rating.router, prefix=prefix)
