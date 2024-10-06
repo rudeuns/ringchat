@@ -4,20 +4,20 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /workdir/backend
 
-RUN pip install -U pip && pip install -U poetry
+# RUN pip install -U pip && pip install -U poetry
 
-RUN poetry config virtualenvs.create false \
-    && poetry config virtualenvs.in-project false
+# RUN poetry config virtualenvs.create false \
+#     && poetry config virtualenvs.in-project false
 
-COPY pyproject.toml ./
+# COPY pyproject.toml ./
 
-RUN poetry install --no-root --no-interaction --network-timeout 600
+# RUN poetry install --no-root --no-interaction
 
-# RUN pip install -U pip
+RUN pip install -U pip
 
-# COPY requirements.txt ./
+COPY requirements.txt ./
 
-# RUN pip install -r requirements.txt --default-timeout=500
+RUN pip install -r requirements.txt --default-timeout=600
 
 COPY . .
 
