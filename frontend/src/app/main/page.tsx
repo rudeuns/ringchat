@@ -1,20 +1,14 @@
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { LargeLogoDesc } from "@/components/common/Texts";
-import AuthForm from "@/components/auth/AuthForm";
+import LinkModalNav from "@/components/link/LinkModalNav";
+import LinkForm from "@/components/link/LinkForm";
 
-export default function RootPage() {
-  const accessToken = cookies().get("access_token")?.value;
-  if (accessToken) {
-    redirect("/main");
-  }
-
+export default function MainPage() {
   return (
-    <div className="flex flex-col h-full">
-      <div className="h-topbar" />
-      <div className="container-main">
-        <LargeLogoDesc />
-        <AuthForm />
+    <div className="container-main">
+      <LargeLogoDesc />
+      <div className="relative flex flex-col self-center w-2/3 min-w-[32rem]">
+        <LinkModalNav />
+        <LinkForm />
       </div>
     </div>
   );
