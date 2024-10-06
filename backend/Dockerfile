@@ -4,14 +4,20 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /workdir/backend
 
-RUN pip install -U pip && pip install -U poetry
+# RUN pip install -U pip && pip install -U poetry
 
-RUN poetry config virtualenvs.create false \
-    && poetry config virtualenvs.in-project false
+# RUN poetry config virtualenvs.create false \
+#     && poetry config virtualenvs.in-project false
 
-COPY pyproject.toml ./
+# COPY pyproject.toml ./
 
-RUN poetry install --no-root --no-dev --no-interaction
+# RUN poetry install --no-root --no-dev --no-interaction
+
+RUN pip install -U pip
+
+COPY requirements.txt ./
+
+RUN pip install -r requirements.txt
 
 COPY . .
 
