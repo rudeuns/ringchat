@@ -17,7 +17,7 @@ RUN pip install -U pip
 
 COPY requirements.txt ./
 
-RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt --default-timeout=500
 
 COPY . .
 
