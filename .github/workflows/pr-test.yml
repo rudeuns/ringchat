@@ -17,12 +17,12 @@ jobs:
         id: list_prs
         with:
           script: |
-            const { data: pullRequests } = await github.pulls.list({
+            const pullRequests = await github.rest.pulls.list({
               owner: context.repo.owner,
               repo: context.repo.repo,
               state: 'open',
             });
-            return pullRequests;
+            return pullRequests.data;
 
       - name: Check Deadlines for Main Branch
         uses: actions/github-script@v6
