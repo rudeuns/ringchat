@@ -5,7 +5,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: '0 */3 * * *'
+    - cron: "0 */3 * * *" # 3시간마다 동작
 
 jobs:
   check-pull-requests:
@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: List Open Pull Requests
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         id: list_prs
         with:
           script: |
@@ -27,7 +27,7 @@ jobs:
             return pullRequests.data;
 
       - name: Check Deadlines for Main Branch
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         with:
@@ -36,9 +36,9 @@ jobs:
             const now = new Date();
 
             const labelTimeLimits = {
-              "urgent": 5 * 1000,   
-              "medium": 10 * 1000,  
-              "normal": 60 * 1000,  
+              "urgent": 6 * 60 * 60 * 1000,  //  6시간   
+              "medium": 15 * 60 * 60 * 1000, // 15시간
+              "normal": 24 * 60 * 60 * 1000, // 24시간
             };
 
             for (const pr of pullRequests) {
@@ -63,25 +63,26 @@ jobs:
               if (timeElapsed > timeLimit) {
                 const message = {
                   embeds: [{
-                    title: `⚠️ **리뷰를 서둘러주세요** ⚠️`,
-                    description: `**PR Title**: ${pr.title}`,
+                    title: `⚠️ **리뷰를 서둘러주세요 (#${pr.number})** ⚠️`,
                     url: `${pr.html_url}`,
-                    color: 0xff0000,  // 빨간색으로 표시
+                    color: 0xff0000,
                     fields: [
                       {
-                        name: "PR 경과 시간",
+                        name: "**PR 제목**",
+                        value: `**${pr.title}**`
+                      },
+                      {
+                        name: "**PR 경과 시간**",
                         value: `${Math.floor(timeElapsed / (60 * 60 * 1000))}시간 전 생성됨`,
                       }
                     ]
                   }]
-                }
+                };
 
                 await fetch(process.env.DISCORD_WEBHOOK_URL, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify(message),
                 });
-
-                console.log(`Sent notification for PR #${pr.number}`);
               }
             }
