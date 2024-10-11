@@ -1,0 +1,84 @@
+name: PR Review Reminder
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+
+jobs:
+  check-pull-requests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: List Open Pull Requests
+        uses: actions/github-script@v6
+        id: list_prs
+        with:
+          script: |
+            const pullRequests = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+            });
+            return pullRequests.data;
+
+      - name: Check Deadlines for Main Branch
+        uses: actions/github-script@v6
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        with:
+          script: |
+            const pullRequests = ${{ steps.list_prs.outputs.result }};
+            const now = new Date();
+
+            const labelTimeLimits = {
+              "urgent": 5 * 1000,   
+              "medium": 10 * 1000,  
+              "normal": 60 * 1000,  
+            };
+
+            for (const pr of pullRequests) {
+              if (pr.base.ref !== "main") {
+                continue; 
+              }
+
+              const labels = pr.labels.map(label => label.name);
+              let timeLimit = null;
+
+              if (labels.includes("urgent")) {
+                timeLimit = labelTimeLimits["urgent"];
+              } else if (labels.includes("medium")) {
+                timeLimit = labelTimeLimits["medium"];
+              } else {
+                timeLimit = labelTimeLimits["normal"];
+              }
+
+              const createdAt = new Date(pr.created_at);
+              const timeElapsed = now - createdAt;
+
+              if (timeElapsed > timeLimit) {
+                const message = {
+                  embeds: [{
+                    title: `⚠️ **리뷰를 서둘러주세요** ⚠️`,
+                    description: `**PR Title**: ${pr.title}`,
+                    url: `${pr.html_url}`,
+                    color: 0xff0000,  // 빨간색으로 표시
+                    fields: [
+                      {
+                        name: "PR 경과 시간",
+                        value: `${Math.floor(timeElapsed / (60 * 60 * 1000))}시간 전 생성됨`,
+                      }
+                    ]
+                  }]
+                }
+
+                await fetch(process.env.DISCORD_WEBHOOK_URL, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(message),
+                });
+
+                console.log(`Sent notification for PR #${pr.number}`);
+              }
+            }
