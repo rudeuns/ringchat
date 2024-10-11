@@ -63,19 +63,10 @@ jobs:
               if (timeElapsed > timeLimit) {
                 const message = {
                   embeds: [{
-                    title: `⚠️ **리뷰를 서둘러주세요 (#${pr.number})** ⚠️`,
+                    title: `⚠️  **리뷰를 서둘러주세요 (#${pr.number})**  ⚠️`,
+                    description: `**${pr.title}**\n\n${Math.floor(timeElapsed / (60 * 60 * 1000))}시간 전 생성됨`
                     url: `${pr.html_url}`,
                     color: 0xff0000,
-                    fields: [
-                      {
-                        name: "**PR 제목**",
-                        value: `**${pr.title}**`
-                      },
-                      {
-                        name: "**PR 경과 시간**",
-                        value: `${Math.floor(timeElapsed / (60 * 60 * 1000))}시간 전 생성됨`,
-                      }
-                    ]
                   }]
                 };
 
