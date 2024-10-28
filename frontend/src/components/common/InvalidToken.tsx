@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { fetchClient } from "@/lib/fetch";
+import { fetchClient } from "@/lib/fetchClient";
 
 export default function InvalidToken() {
   const handleLogout = async () => {

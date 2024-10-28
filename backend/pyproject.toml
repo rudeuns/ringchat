@@ -13,25 +13,24 @@ langchain = "^0.2.12"
 langchain-community = "^0.2.11"
 langchain-openai = "^0.1.20"
 python-dotenv = "^1.0.1"
-oracledb = "^2.3.0"
 chromadb = "^0.5.5"
-langchain-huggingface = "^0.0.3"
 beautifulsoup4 = "^4.12.3"
 pgvector = "^0.3.2"
 psycopg2-binary = "^2.9.9"
 alembic = "^1.13.2"
 asyncpg = "^0.29.0"
-greenlet = "^3.0.3"
 pyjwt = "^2.9.0"
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 bcrypt = "==4.0.1"
+apscheduler = "^3.10.4"
+lxml-html-clean = "^0.2.2"
+
+[tool.poetry.dev-dependencies]
 isort = "^5.13.2"
 black = "^24.8.0"
 flake8 = "^7.1.1"
 flake8-pyproject = "^1.2.3"
 flake8-mutable = "^1.2.0"
-apscheduler = "^3.10.4"
-lxml-html-clean = "^0.2.2"
 
 [build-system]
 requires = ["poetry-core"]

@@ -1,5 +1,5 @@
 # poetry
-poetry.lock
+# poetry.lock
 
 # local env files
 .env
@@ -10,7 +10,7 @@ chroma_db
 Wallet_MLDB
 
 # python library
-requirements.txt
+# requirements.txt
 
 # uploaded files
 uploads

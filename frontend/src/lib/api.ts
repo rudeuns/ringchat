@@ -1,4 +1,4 @@
-import { ErrorCode, fetchServer } from "@/lib/fetch";
+import { ErrorCode, fetchServer } from "@/lib/fetchServer";
 
 export async function fetchEmail({ accessToken }: { accessToken: string }) {
   try {

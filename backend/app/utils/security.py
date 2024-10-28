@@ -2,15 +2,14 @@ import jwt
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 from fastapi import Request, Response, HTTPException
-import os
-from dotenv import load_dotenv
+from app.utils.config import get_env
 
-load_dotenv(".env.local")
-
-SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = os.getenv("ALGORITHM")
-ACCESS_TOKEN_EXPIRE_MINUTES = float(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
-COOKIE_EXPIRE_SECOND = int(os.getenv("COOKIE_EXPIRE_SECOND"))
+JWT_SECRET_KEY = get_env("JWT_SECRET_KEY")
+ALGORITHM = get_env("ALGORITHM", "HS256")
+ACCESS_TOKEN_EXPIRE_MINUTES = float(
+    get_env("ACCESS_TOKEN_EXPIRE_MINUTES", 1440)
+)
+COOKIE_EXPIRE_SECOND = int(get_env("COOKIE_EXPIRE_SECOND", 86400))
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -34,15 +33,18 @@ def create_access_token(data: dict, expires_delta: timedelta = None) -> str:
     to_encode = data.copy()
     to_encode.update({"exp": expire})
 
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, JWT_SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
 
 def set_access_token_cookie(res: Response, access_token: str):
+    secure = True if get_env("ENVIRONMENT") == "production" else False
+
     res.set_cookie(
         key="access_token",
         value=access_token,
         httponly=True,
+        secure=secure,
         max_age=COOKIE_EXPIRE_SECOND,
     )
 
@@ -57,7 +59,9 @@ def get_current_user_id(req: Request) -> int:
                 headers={"X-Error": "UNAUTHORIZED"},
             )
 
-        payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(
+            access_token, JWT_SECRET_KEY, algorithms=[ALGORITHM]
+        )
         user_id: str = payload.get("sub")
         return int(user_id)
     except Exception as e:

@@ -5,7 +5,7 @@ import Image from "next/image";
 import { HiOutlineStar } from "react-icons/hi2";
 import Rating from "@/components/chat/Rating";
 import Markdown from "@/components/common/Markdown";
-import { fetchClient } from "@/lib/fetch";
+import { fetchClient } from "@/lib/fetchClient";
 
 type AIMessageProps = {
   id?: number;

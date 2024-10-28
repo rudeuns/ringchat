@@ -1,45 +1,27 @@
-import os
 import asyncio
-from dotenv import load_dotenv
 from logging.config import fileConfig
+from alembic import context
 
 from sqlalchemy import pool
-from sqlalchemy import engine_from_config
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from alembic import context
-
 from app.db.models import Base
-
-
-# 환경 결정 (기본값 development) 
-env = os.getenv('ALEMBIC_ENV', 'development')
+from app.utils.config import get_env
 
 # SQL query log 출력 여부 결정 
-if env == 'development': 
+if get_env("ENVIRONMENT") == "development": 
     echo = True 
 else: 
     echo = False 
 
-# 환경에 따른 환경설정 파일 결정 
-env_file = {
-    'development': '.env.local',    
-    'production': '.env.production'
-}.get(env, '.env')  # 둘 다 파일이 없을 경우 .env에서 가지고 옴
+DATABASE_URL = get_env("DATABASE_URL")
 
-load_dotenv(env_file)
-
-DB_URL = {
-    'development': os.getenv('DEV_DATABASE_URL'),
-    'production': os.getenv('PROD_DATABASE_URL')
-}.get(env, os.getenv('DATABASE_URL'))
-
-if not DB_URL:
-    raise ValueError(f"No database URL configured for the {env} environment.")
+if not DATABASE_URL:
+    raise ValueError(f"No database URL configured for the {get_env("ENVIRONMENT")} environment.")
 
 config = context.config
-config.set_main_option('sqlalchemy.url', DB_URL)
+config.set_main_option("sqlalchemy.url", DATABASE_URL)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

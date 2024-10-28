@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useFolder } from "@/context/FolderContext";
-import { fetchClient } from "@/lib/fetch";
+import { fetchClient } from "@/lib/fetchClient";
 import { FolderData } from "@/lib/interfaces";
 import { HiFolder } from "react-icons/hi2";
 import Folder from "@/components/sidebar/Folder";

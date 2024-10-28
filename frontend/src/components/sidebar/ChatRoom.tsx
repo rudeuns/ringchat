@@ -9,7 +9,7 @@ import {
   HiBookmark,
   HiOutlineChatBubbleOvalLeft,
 } from "react-icons/hi2";
-import { fetchClient } from "@/lib/fetch";
+import { fetchClient } from "@/lib/fetchClient";
 
 interface ChatRoomProps {
   id: number;

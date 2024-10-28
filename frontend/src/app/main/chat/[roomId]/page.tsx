@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { fetchClient } from "@/lib/fetch";
+import { fetchClient } from "@/lib/fetchClient";
 import { MessageData } from "@/lib/interfaces";
 import UserMessage from "@/components/chat/UserMessage";
 import AIMessage from "@/components/chat/AIMessage";
@@ -149,5 +149,4 @@ export default function ChatPage() {
       <MessageInput onSendMessage={handleSendMessage} />
     </>
   );
-
 }

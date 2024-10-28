@@ -8,7 +8,7 @@ import { HiFolder } from "react-icons/hi2";
 import { FaFolderOpen } from "react-icons/fa6";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import ChatRoom, { ChatRoomNotice } from "@/components/sidebar/ChatRoom";
-import { fetchClient } from "@/lib/fetch";
+import { fetchClient } from "@/lib/fetchClient";
 
 interface FolderProps {
   id: number;

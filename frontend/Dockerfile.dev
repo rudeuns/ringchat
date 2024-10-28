@@ -1,10 +1,10 @@
-FROM node:20.16.0-alpine AS builder
-
+FROM node:18-alpine
 WORKDIR /workdir/frontend
 
-COPY package.json package-lock.json ./
+ENV NODE_ENV=development
 
-RUN npm install
+COPY package.json package-lock.json ./
+RUN apk add --no-cache libc6-compat && npm ci
 
 COPY . .
 

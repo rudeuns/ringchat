@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLink } from "@/context/LinkContext";
-import { fetchClient } from "@/lib/fetch";
+import { fetchClient } from "@/lib/fetchClient";
 import { LinkData } from "@/lib/interfaces";
 import { HiOutlineSearch } from "react-icons/hi";
 import { HiOutlineXMark } from "react-icons/hi2";

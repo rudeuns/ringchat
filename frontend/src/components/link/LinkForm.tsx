@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLink } from "@/context/LinkContext";
-import { fetchClient } from "@/lib/fetch";
+import { fetchClient } from "@/lib/fetchClient";
 import { HiOutlineBackspace } from "react-icons/hi2";
 import { PiSpinnerGapBold } from "react-icons/pi";
 

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { HiChevronUp, HiChevronDown } from "react-icons/hi2";
-import { fetchClient } from "@/lib/fetch";
+import { fetchClient } from "@/lib/fetchClient";
 
 export default function TopBar({ email }: { email: string }) {
   const [showMenu, setShowMenu] = useState(false);

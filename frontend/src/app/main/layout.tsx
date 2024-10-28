@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { fetchEmail, fetchFolders, fetchNoFolderChatRooms } from "@/lib/api";
-import { ErrorCode } from "@/lib/fetch";
+import { ErrorCode } from "@/lib/fetchServer";
 import { FolderData, ChatRoomData } from "@/lib/interfaces";
 import { LinkProvider } from "@/context/LinkContext";
 import SideBar from "@/components/sidebar/SideBar";
