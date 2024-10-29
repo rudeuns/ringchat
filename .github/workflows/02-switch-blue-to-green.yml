@@ -1,0 +1,81 @@
+name: Switch Container Blue to Green
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  check-ports:
+    runs-on: ubuntu-latest
+    outputs:
+      front-blue-port: ${{ steps.ports.outputs.FRONT_BLUE_PORT }}
+      front-green-port: ${{ steps.ports.outputs.FRONT_GREEN_PORT }}
+      back-blue-port: ${{ steps.ports.outputs.BACK_BLUE_PORT }}
+      back-green-port: ${{ steps.ports.outputs.BACK_GREEN_PORT }}
+    steps:
+      - name: Create server ssh key files
+        run: |
+          echo "${{ secrets.FRONT_SERVER_SSH_KEY }}" > ~/fkey.pem
+          echo "${{ secrets.BACK_SERVER_SSH_KEY }}" > ~/bkey.pem
+          chmod 400 ~/fkey.pem ~/bkey.pem
+
+      - name: Check container ports
+        id: ports
+        run: |
+          declare -A servers=(
+            ["FRONT_BLUE_PORT"]="frontend-blue ${{ secrets.FRONT_SERVER_HOST }} ~/fkey.pem"
+            ["FRONT_GREEN_PORT"]="frontend-green ${{ secrets.FRONT_SERVER_HOST }} ~/fkey.pem"
+            ["BACK_BLUE_PORT"]="backend-blue ${{ secrets.BACK_SERVER_HOST }} ~/bkey.pem"
+            ["BACK_GREEN_PORT"]="backend-green ${{ secrets.BACK_SERVER_HOST }} ~/bkey.pem"
+          )
+
+          for port in "${!servers[@]}"; do
+            IFS=' ' read -r container host key <<< "${servers[$port]}"
+            port_value=$(ssh -i "$key" -o StrictHostKeyChecking=no ubuntu@"$host" \
+              "docker inspect --format='{{.HostConfig.PortBindings}}' $container | awk '{print \$2}' | awk -F '}' '{print \$1}'")
+
+            if [[ -z "$port_value" ]]; then
+              echo "Error: $port is not set" >&2
+              exit 1
+            fi
+            echo "$port=$port_value"
+            echo "$port=$port_value" >> $GITHUB_OUTPUT
+          done
+
+  switch-traffic:
+    runs-on: ubuntu-latest
+    needs: check-ports
+    steps:
+      - name: Modify nginx config on server
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          key: ${{ secrets.FRONT_SERVER_SSH_KEY }}
+          host: ${{ secrets.FRONT_SERVER_HOST }}
+          username: ubuntu
+          script: |
+            sudo sed -i "/upstream frontend_blue {/,/}/s/:\([0-9]\+\);/:${{ needs.check-ports.outputs.front-green-port }};/" /etc/nginx/sites-available/ringchat.site
+            sudo sed -i "/upstream backend_blue {/,/}/s/:\([0-9]\+\);/:${{ needs.check-ports.outputs.back-green-port }};/" /etc/nginx/sites-available/ringchat.site
+            sudo sed -i "/upstream frontend_green {/,/}/s/:\([0-9]\+\);/:9999;/" /etc/nginx/sites-available/ringchat.site
+            sudo sed -i "/upstream backend_green {/,/}/s/:\([0-9]\+\);/:9999;/" /etc/nginx/sites-available/ringchat.site
+            sudo sed -i "/upstream frontend_old {/,/}/s/:\([0-9]\+\);/:${{ needs.check-ports.outputs.front-blue-port }};/" /etc/nginx/sites-available/ringchat.site
+            sudo sed -i "/upstream backend_old {/,/}/s/:\([0-9]\+\);/:${{ needs.check-ports.outputs.back-blue-port }};/" /etc/nginx/sites-available/ringchat.site
+            sudo systemctl reload nginx
+
+  rename-container:
+    runs-on: ubuntu-latest
+    needs: switch-traffic
+    steps:
+      - name: Create server ssh key files
+        run: |
+          echo "${{ secrets.FRONT_SERVER_SSH_KEY }}" > ~/fkey.pem
+          echo "${{ secrets.BACK_SERVER_SSH_KEY }}" > ~/bkey.pem
+          chmod 400 ~/fkey.pem ~/bkey.pem
+
+      - name: Rename container
+        run: |
+          ssh -i ~/fkey.pem -o StrictHostKeyChecking=no ubuntu@${{ secrets.FRONT_SERVER_HOST }} \
+            "docker rename frontend-blue frontend-old && docker rename frontend-green frontend-blue"
+
+          ssh -i ~/bkey.pem -o StrictHostKeyChecking=no ubuntu@${{ secrets.BACK_SERVER_HOST }} \
+            "docker rename backend-blue backend-old && docker rename backend-green backend-blue"

@@ -1,0 +1,37 @@
+name: Remove Old Container (Manual)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update-nginx-config:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update nginx config on server
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          key: ${{ secrets.FRONT_SERVER_SSH_KEY }}
+          host: ${{ secrets.FRONT_SERVER_HOST }}
+          username: ubuntu
+          script: |
+            sudo sed -i "/upstream frontend_old {/,/}/s/:\([0-9]\+\);/:9999;/" /etc/nginx/sites-available/ringchat.site
+            sudo sed -i "/upstream backend_old {/,/}/s/:\([0-9]\+\);/:9999;/" /etc/nginx/sites-available/ringchat.site
+            sudo systemctl reload nginx
+
+  remove-old-container:
+    runs-on: ubuntu-latest
+    needs: update-nginx-config
+    steps:
+      - name: Create server ssh key files
+        run: |
+          echo "${{ secrets.FRONT_SERVER_SSH_KEY }}" > ~/fkey.pem
+          echo "${{ secrets.BACK_SERVER_SSH_KEY }}" > ~/bkey.pem
+          chmod 400 ~/fkey.pem ~/bkey.pem
+
+      - name: Remove old container
+        run: |
+          ssh -i ~/fkey.pem -o StrictHostKeyChecking=no ubuntu@${{ secrets.FRONT_SERVER_HOST }} \
+            "docker stop frontend-old || true && docker rm frontend-old || true && docker image prune -f"
+
+          ssh -i ~/bkey.pem -o StrictHostKeyChecking=no ubuntu@${{ secrets.BACK_SERVER_HOST }} \
+            "docker stop backend-old || true && docker rm backend-old || true && docker image prune -f"
